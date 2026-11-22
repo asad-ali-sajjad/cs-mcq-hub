@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>CS MCQ Hub</title>
+
+<style>
+
+:root{
+    --bg:#f6f8fc;
+    --card:#ffffff;
+    --text:#162033;
+    --muted:#66758f;
+    --border:#e7edf5;
+
+    --primary:#5b7cff;
+    --primary-light:#edf2ff;
+
+    --shadow:
+        0 2px 8px rgba(15,23,42,.04),
+        0 15px 40px rgba(15,23,42,.08);
+}
+
+[data-theme="dark"]{
+    --bg:#0f172a;
+    --card:#172033;
+    --text:#f8fafc;
+    --muted:#94a3b8;
+    --border:#273449;
+
+    --primary:#7395ff;
+    --primary-light:#1f2f57;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:
+    Inter,
+    Segoe UI,
+    sans-serif;
+    overflow-x:hidden;
+}
+
+/* =======================
+BACKGROUND
+======================= */
+
+.blob{
+    position:fixed;
+    border-radius:50%;
+    filter:blur(90px);
+    z-index:-1;
+    opacity:.45;
+}
+
+.blob1{
+    width:320px;
+    height:320px;
+    background:#7ea1ff;
+    top:-120px;
+    left:-100px;
+}
+
+.blob2{
+    width:350px;
+    height:350px;
+    background:#8df2d7;
+    right:-120px;
+    top:100px;
+}
+
+.blob3{
+    width:280px;
+    height:280px;
+    background:#c5b1ff;
+    bottom:-100px;
+    left:40%;
+}
+
+/* =======================
+HEADER
+======================= */
+
+header{
+    max-width:1200px;
+    margin:auto;
+    padding:24px;
+}
+
+.nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:1.4rem;
+    font-weight:800;
+}
+
+.logo span{
+    color:var(--primary);
+}
+
+.theme-btn{
+    border:none;
+    padding:10px 18px;
+    border-radius:999px;
+    background:var(--card);
+    box-shadow:var(--shadow);
+    cursor:pointer;
+    color:var(--text);
+}
+
+/* =======================
+HERO
+======================= */
+
+.hero{
+    max-width:1200px;
+    margin:auto;
+    padding:70px 24px;
+}
+
+.tag{
+    display:inline-block;
+    padding:8px 16px;
+    border-radius:999px;
+    background:var(--primary-light);
+    color:var(--primary);
+    font-weight:700;
+    margin-bottom:18px;
+}
+
+.hero h1{
+    font-size:clamp(2.5rem,5vw,5rem);
+    line-height:1.1;
+    margin-bottom:20px;
+}
+
+.hero p{
+    max-width:700px;
+    color:var(--muted);
+    font-size:1.1rem;
+    line-height:1.8;
+}
+
+.hero-actions{
+    margin-top:35px;
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    text-decoration:none;
+    padding:14px 22px;
+    border-radius:14px;
+    font-weight:700;
+}
+
+.btn-primary{
+    background:var(--primary);
+    color:white;
+}
+
+.btn-secondary{
+    background:var(--card);
+    color:var(--text);
+    box-shadow:var(--shadow);
+}
+
+/* =======================
+STATS
+======================= */
+
+.stats{
+    max-width:1200px;
+    margin:auto;
+    padding:20px 24px 50px;
+
+    display:grid;
+    gap:20px;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+}
+
+.stat-card{
+    background:var(--card);
+    padding:25px;
+    border-radius:20px;
+    box-shadow:var(--shadow);
+}
+
+.stat-card h2{
+    color:var(--primary);
+    margin-bottom:5px;
+}
+
+/* =======================
+SEARCH
+======================= */
+
+.search-area{
+    max-width:1200px;
+    margin:auto;
+    padding:20px 24px;
+}
+
+.search-box{
+    width:100%;
+    padding:18px 22px;
+
+    border-radius:18px;
+    border:1px solid var(--border);
+
+    background:var(--card);
+    color:var(--text);
+
+    font-size:1rem;
+}
+
+/* =======================
+SUBJECTS
+======================= */
+
+.subjects{
+    max-width:1200px;
+    margin:auto;
+    padding:10px 24px 80px;
+}
+
+.section-title{
+    margin-bottom:25px;
+    font-size:1.6rem;
+}
+
+.subject-grid{
+    display:grid;
+    gap:22px;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(280px,1fr));
+}
+
+.subject-card{
+    background:var(--card);
+    border-radius:24px;
+
+    padding:28px;
+
+    box-shadow:var(--shadow);
+
+    transition:.25s;
+}
+
+.subject-card:hover{
+    transform:translateY(-6px);
+}
+
+.subject-icon{
+    font-size:2rem;
+    margin-bottom:15px;
+}
+
+.subject-card h3{
+    margin-bottom:10px;
+}
+
+.subject-card p{
+    color:var(--muted);
+    margin-bottom:20px;
+    line-height:1.7;
+}
+
+.subject-link{
+    display:inline-block;
+
+    text-decoration:none;
+
+    color:white;
+
+    background:var(--primary);
+
+    padding:10px 18px;
+    border-radius:12px;
+
+    font-weight:700;
+}
+
+/* =======================
+FOOTER
+======================= */
+
+footer{
+    text-align:center;
+    padding:40px 20px;
+    color:var(--muted);
+}
+
+/* =======================
+RESPONSIVE
+======================= */
+
+@media(max-width:768px){
+
+.hero{
+    padding-top:40px;
+}
+
+.hero-actions{
+    flex-direction:column;
+}
+
+.btn{
+    text-align:center;
+}
+}
+
+</style>
+</head>
+<body>
+
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+
+<header>
+
+<div class="nav">
+
+<div class="logo">
+CS<span>-MCQ-HUB</span>
+</div>
+
+<button class="theme-btn" id="themeBtn">
+🌙 Dark
+</button>
+
+</div>
+
+</header>
+
+<section class="hero">
+
+<span class="tag">
+🚀 Interactive Exam Preparation Workspace
+</span>
+
+<h1>
+Study Smarter.<br>
+Revise Faster.
+</h1>
+
+<p>
+A personal collection of interactive MCQ environments designed for university exam preparation. Open any subject and practice with searchable questions, quizzes, mock exams, saved reviews, progress tracking, and more.
+</p>
+
+<div class="hero-actions">
+
+<a href="#subjects" class="btn btn-primary">
+Browse Subjects
+</a>
+
+<a href="https://github.com/" class="btn btn-secondary">
+GitHub Repository
+</a>
+
+</div>
+
+</section>
+
+<section class="stats">
+
+<div class="stat-card">
+<h2>7+</h2>
+<p>Subjects</p>
+</div>
+
+<div class="stat-card">
+<h2>1000+</h2>
+<p>MCQs</p>
+</div>
+
+<div class="stat-card">
+<h2>∞</h2>
+<p>Practice Sessions</p>
+</div>
+
+<div class="stat-card">
+<h2>24/7</h2>
+<p>Offline Friendly</p>
+</div>
+
+</section>
+
+<section class="search-area">
+
+<input
+type="text"
+class="search-box"
+placeholder="🔍 Search subject..."
+id="searchInput"
+>
+
+</section>
+
+<section class="subjects" id="subjects">
+
+<h2 class="section-title">
+📚 Subjects
+</h2>
+
+<div class="subject-grid" id="subjectGrid">
+
+<div class="subject-card">
+<div class="subject-icon">⚡</div>
+<h3>Parallel & Distributed Computing</h3>
+<p>
+Architectures, MPI, Speedup Laws, Scalability and Distributed Systems.
+</p>
+<a class="subject-link" href="pdc/index.html">
+Launch Subject
+</a>
+</div>
+
+<div class="subject-card">
+<div class="subject-icon">💻</div>
+<h3>Object Oriented Programming</h3>
+<p>
+Classes, Objects, Inheritance, Polymorphism and Design Principles.
+</p>
+<a class="subject-link" href="oop/index.html">
+Launch Subject
+</a>
+</div>
+
+<div class="subject-card">
+<div class="subject-icon">🌳</div>
+<h3>Data Structures & Algorithms</h3>
+<p>
+Arrays, Trees, Graphs, Searching, Sorting and Complexity Analysis.
+</p>
+<a class="subject-link" href="dsa/index.html">
+Launch Subject
+</a>
+</div>
+
+<div class="subject-card">
+<div class="subject-icon">🗄️</div>
+<h3>Database Systems</h3>
+<p>
+SQL, Transactions, Normalization, Procedures, Triggers and Views.
+</p>
+<a class="subject-link" href="#">
+Launch Subject
+</a>
+</div>
+
+<div class="subject-card">
+<div class="subject-icon">🌐</div>
+<h3>Computer Networks</h3>
+<p>
+OSI, TCP/IP, Routing, DNS, NAT, Protocols and Security.
+</p>
+<a class="subject-link" href="#">
+Launch Subject
+</a>
+</div>
+
+<div class="subject-card">
+<div class="subject-icon">🤖</div>
+<h3>Artificial Intelligence</h3>
+<p>
+Agents, Search Algorithms, Knowledge Representation and Machine Learning.
+</p>
+<a class="subject-link" href="#">
+Launch Subject
+</a>
+</div>
+
+</div>
+
+</section>
+
+<footer>
+
+Built for exam preparation • CS-MCQ-HUB
+
+</footer>
+
+<script>
+
+const themeBtn =
+document.getElementById("themeBtn");
+
+themeBtn.onclick = () => {
+
+const dark =
+document.documentElement
+.getAttribute("data-theme");
+
+if(dark==="dark"){
+document.documentElement.removeAttribute("data-theme");
+themeBtn.textContent="🌙 Dark";
+}
+else{
+document.documentElement.setAttribute("data-theme","dark");
+themeBtn.textContent="☀️ Light";
+}
+};
+
+const searchInput =
+document.getElementById("searchInput");
+
+searchInput.addEventListener(
+"input",
+function(){
+
+const value =
+this.value.toLowerCase();
+
+document
+.querySelectorAll(".subject-card")
+.forEach(card=>{
+
+card.style.display =
+card.textContent
+.toLowerCase()
+.includes(value)
+? "block"
+: "none";
+
+});
+});
+
+</script>
+
+</body>
+</html>
