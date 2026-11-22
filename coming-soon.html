@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Module Coming Soon • CS MCQ Hub</title>
+
+<style>
+
+:root{
+    --bg:#f6f8fc;
+    --card:#ffffff;
+    --text:#162033;
+    --muted:#66758f;
+    --border:#e7edf5;
+
+    --primary:#5b7cff;
+    --primary-light:#edf2ff;
+
+    --shadow:
+        0 2px 8px rgba(15,23,42,.04),
+        0 15px 40px rgba(15,23,42,.08);
+}
+
+[data-theme="dark"]{
+    --bg:#0f172a;
+    --card:#172033;
+    --text:#f8fafc;
+    --muted:#94a3b8;
+    --border:#273449;
+
+    --primary:#7395ff;
+    --primary-light:#1f2f57;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:
+    Inter,
+    Segoe UI,
+    sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    overflow-x:hidden;
+}
+
+/* =======================
+BACKGROUND
+======================= */
+
+.blob{
+    position:fixed;
+    border-radius:50%;
+    filter:blur(90px);
+    z-index:-1;
+    opacity:.45;
+}
+
+.blob1{
+    width:320px;
+    height:320px;
+    background:#7ea1ff;
+    top:-120px;
+    left:-100px;
+}
+
+.blob2{
+    width:350px;
+    height:350px;
+    background:#8df2d7;
+    right:-120px;
+    top:100px;
+}
+
+.blob3{
+    width:280px;
+    height:280px;
+    background:#c5b1ff;
+    bottom:-100px;
+    left:40%;
+}
+
+/* =======================
+HEADER
+======================= */
+
+header{
+    width:100%;
+    max-width:1200px;
+    margin:0 auto;
+    padding:24px;
+}
+
+.nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:1.4rem;
+    font-weight:800;
+    text-decoration:none;
+    color:var(--text);
+}
+
+.logo span{
+    color:var(--primary);
+}
+
+.theme-btn{
+    border:none;
+    padding:10px 18px;
+    border-radius:999px;
+    background:var(--card);
+    box-shadow:var(--shadow);
+    cursor:pointer;
+    color:var(--text);
+}
+
+/* =======================
+STATUS CARD
+======================= */
+
+.status-wrapper{
+    max-width:680px;
+    width:100%;
+    margin:auto;
+    padding:24px;
+}
+
+.status-card{
+    background:var(--card);
+    border-radius:28px;
+    padding:48px 36px;
+    box-shadow:var(--shadow);
+    text-align:center;
+}
+
+.status-icon{
+    font-size:3.2rem;
+    margin-bottom:18px;
+}
+
+.tag{
+    display:inline-block;
+    padding:8px 16px;
+    border-radius:999px;
+    background:var(--primary-light);
+    color:var(--primary);
+    font-weight:700;
+    font-size:.9rem;
+    margin-bottom:18px;
+}
+
+.status-card h1{
+    font-size:clamp(1.8rem,4vw,2.6rem);
+    line-height:1.2;
+    margin-bottom:14px;
+}
+
+.status-card p{
+    color:var(--muted);
+    font-size:1.05rem;
+    line-height:1.75;
+    margin-bottom:32px;
+}
+
+.actions{
+    display:flex;
+    gap:14px;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.btn{
+    text-decoration:none;
+    padding:14px 22px;
+    border-radius:14px;
+    font-weight:700;
+    transition:.2s;
+}
+
+.btn-primary{
+    background:var(--primary);
+    color:white;
+}
+
+.btn-secondary{
+    background:var(--bg);
+    color:var(--text);
+    border:1px solid var(--border);
+}
+
+/* =======================
+FOOTER
+======================= */
+
+footer{
+    text-align:center;
+    padding:32px 20px;
+    color:var(--muted);
+}
+
+@media(max-width:600px){
+    .status-card{
+        padding:36px 22px;
+    }
+    .actions{
+        flex-direction:column;
+    }
+    .btn{
+        width:100%;
+    }
+}
+
+</style>
+</head>
+<body>
+
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+
+<header>
+<div class="nav">
+<a href="index.html" class="logo">
+CS<span>-MCQ-HUB</span>
+</a>
+
+<button class="theme-btn" id="themeBtn">
+🌙 Dark
+</button>
+</div>
+</header>
+
+<main class="status-wrapper">
+<div class="status-card">
+<div class="status-icon">🛠️</div>
+<span class="tag">🚧 Under Construction</span>
+<h1 id="moduleTitle">Subject Module Coming Soon</h1>
+<p id="moduleDesc">
+We're currently curating and organizing interactive MCQs, mock quizzes, and revision notes for this module. Check back soon or follow the repository for updates!
+</p>
+
+<div class="actions">
+<a href="index.html" class="btn btn-primary">
+← Back to Subjects
+</a>
+<a href="https://github.com/asad-ali-sajjad/cs-mcq-hub" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+View GitHub Repo
+</a>
+</div>
+</div>
+</main>
+
+<footer>
+Built for exam preparation • CS-MCQ-HUB
+</footer>
+
+<script>
+
+const themeBtn = document.getElementById("themeBtn");
+
+// Sync theme preference from index.html
+if(localStorage.getItem("theme") === "dark"){
+    document.documentElement.setAttribute("data-theme","dark");
+    themeBtn.textContent = "☀️ Light";
+}
+
+themeBtn.onclick = () => {
+    const dark = document.documentElement.getAttribute("data-theme");
+
+    if(dark === "dark"){
+        document.documentElement.removeAttribute("data-theme");
+        localStorage.setItem("theme","light");
+        themeBtn.textContent = "🌙 Dark";
+    }
+    else{
+        document.documentElement.setAttribute("data-theme","dark");
+        localStorage.setItem("theme","dark");
+        themeBtn.textContent = "☀️ Light";
+    }
+};
+
+// Display the clicked subject's name dynamically
+const params = new URLSearchParams(window.location.search);
+const subject = params.get("subject");
+
+if(subject){
+    document.getElementById("moduleTitle").textContent = subject;
+    document.getElementById("moduleDesc").textContent =
+        `We're currently preparing the interactive MCQ bank, practice quizzes, and mock exams for ${subject}. This module will be live soon!`;
+    document.title = `${subject} (Coming Soon) • CS MCQ Hub`;
+}
+
+</script>
+
+</body>
+</html>
