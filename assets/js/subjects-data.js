@@ -1,105 +1,117 @@
+/* ==========================================================================
+   CS MCQ Hub — Central Subject Registry
+   Evergreen tracks ('Active Track', 'Electives', 'Core CS') & status tags
+   ========================================================================== */
+
 const SUBJECTS_DATA = [
-    // =======================
-    // 7TH SEMESTER (FINALS PREP)
-    // =======================
-    {
-        id: "automata",
-        title: "Theory of Automata",
-        semester: "7th Sem",
-        status: "Finals Prep",
-        icon: "⚙️",
-        description: "Deterministic & Non-Deterministic Finite Automata, Regular Expressions, Context-Free Grammars, Pushdown Automata, and Turing Machines.",
-        ready: false
-    },
-    {
-        id: "pdc",
-        title: "Parallel & Distributed Computing",
-        semester: "7th Sem",
-        status: "Finals Prep",
-        icon: "⚡",
-        description: "Parallel Architectures, MPI, OpenMP, Speedup Laws (Amdahl & Gustafson), Synchronization, and Distributed Systems.",
-        ready: true,
-        dataFile: "data/sem-7/pdc.js"
-    },
-    {
-        id: "deep-learning",
-        title: "Deep Learning",
-        semester: "7th Sem",
-        status: "Finals Prep",
-        icon: "🧠",
-        description: "Neural Networks, Backpropagation, CNNs, RNNs, Transformers, Optimization Algorithms, and Regularization.",
-        ready: true,
-        dataFile: "data/sem-7/deep-learning.js"
-    },
-    {
-        id: "cloud-computing",
-        title: "Cloud Computing",
-        semester: "7th Sem",
-        status: "Finals Prep",
-        icon: "☁️",
-        description: "Virtualization, Service Models (IaaS, PaaS, SaaS), Cloud Architecture, Containers, Orchestration, and Cloud Security.",
-        ready: false
-    },
-
-    // =======================
-    // 8TH SEMESTER (UPCOMING)
-    // =======================
-    {
-        id: "sem-8-placeholder",
-        title: "8th Semester Courses",
-        semester: "8th Sem",
-        status: "Upcoming",
-        icon: "🎓",
-        description: "Final semester electives and core subjects will be added here as soon as 8th semester begins.",
-        ready: false
-    },
-
-    // =======================
-    // CORE CS (FOUNDATION / INTERVIEW PREP)
-    // =======================
-    {
-        id: "oop",
-        title: "Object Oriented Programming",
-        semester: "Core CS",
-        status: "Foundation",
-        icon: "💻",
-        description: "Classes, Objects, Inheritance, Polymorphism, Abstraction, and SOLID Design Principles.",
-        ready: false
-    },
-    {
-        id: "dsa",
-        title: "Data Structures & Algorithms",
-        semester: "Core CS",
-        status: "Foundation",
-        icon: "🌳",
-        description: "Arrays, Trees, Graphs, Dynamic Programming, Searching, Sorting, and Time/Space Complexity.",
-        ready: false
-    },
-    {
-        id: "database-systems",
-        title: "Database Systems",
-        semester: "Core CS",
-        status: "Foundation",
-        icon: "🗄️",
-        description: "SQL, ACID Transactions, Normalization, Indexing, Stored Procedures, Triggers, and Views.",
-        ready: false
-    },
-    {
-        id: "computer-networks",
-        title: "Computer Networks",
-        semester: "Core CS",
-        status: "Foundation",
-        icon: "🌐",
-        description: "OSI & TCP/IP Models, Routing Algorithms, DNS, NAT, Transport Protocols, and Network Security.",
-        ready: false
-    },
-    {
-        id: "artificial-intelligence",
-        title: "Artificial Intelligence",
-        semester: "Core CS",
-        status: "Foundation",
-        icon: "🤖",
-        description: "Intelligent Agents, Heuristic Search, Knowledge Representation, Planning, and Machine Learning Basics.",
-        ready: false
-    }
+  {
+    id: "automata",
+    courseCode: "CS-311",
+    title: "Theory of Automata",
+    track: "Active Track",
+    semester: "Active Track",
+    status: "Exam Prep",
+    icon: "⚙️",
+    description: "Deterministic & Non-Deterministic Finite Automata, Regular Expressions, Context-Free Grammars, Pushdown Automata, and Turing Machines.",
+    ready: true,
+    dataFile: "data/sem-7/automata.js"
+  },
+  {
+    id: "pdc",
+    courseCode: "COS601320",
+    title: "Parallel & Distributed Computing",
+    track: "Active Track",
+    semester: "Active Track",
+    status: "Exam Prep",
+    icon: "⚡",
+    description: "Parallel Architectures, MPI, OpenMP, Speedup Laws (Amdahl & Gustafson), Synchronization, and Distributed Systems.",
+    ready: true,
+    dataFile: "data/sem-7/pdc.js"
+  },
+  {
+    id: "deep-learning",
+    courseCode: "CS-412",
+    title: "Deep Learning",
+    track: "Active Track",
+    semester: "Active Track",
+    status: "Exam Prep",
+    icon: "🧠",
+    description: "Neural Networks, Backpropagation, CNNs, RNNs, Transformers, Optimization Algorithms, and Regularization.",
+    ready: true,
+    dataFile: "data/sem-7/deep-learning.js"
+  },
+  {
+    id: "cloud-computing",
+    courseCode: "CS-415",
+    title: "Cloud Computing",
+    track: "Active Track",
+    semester: "Active Track",
+    status: "Exam Prep",
+    icon: "☁️",
+    description: "Virtualization, Service Models (IaaS, PaaS, SaaS), Cloud Architecture, Containers, Orchestration, and Distributed Storage.",
+    ready: true,
+    dataFile: "data/sem-7/cloud-computing.js"
+  },
+  {
+    id: "information-security",
+    courseCode: "CS-421",
+    title: "Information Security",
+    track: "Electives",
+    semester: "Electives",
+    status: "Coming Soon",
+    icon: "🛡️",
+    description: "Cryptography, Public-Key Infrastructure, Network Security Protocols, Authentication, and Access Control Models.",
+    ready: false,
+    dataFile: "data/sem-8/information-security.js"
+  },
+  {
+    id: "compiler-construction",
+    courseCode: "CS-424",
+    title: "Compiler Construction",
+    track: "Electives",
+    semester: "Electives",
+    status: "Coming Soon",
+    icon: "🛠️",
+    description: "Lexical Analysis, Syntax Parsing (LL/LR), Semantic Analysis, Intermediate Code Generation, and Code Optimization.",
+    ready: false,
+    dataFile: "data/sem-8/compiler-construction.js"
+  },
+  {
+    id: "operating-systems",
+    courseCode: "CS-302",
+    title: "Operating Systems",
+    track: "Core CS",
+    semester: "Core CS",
+    status: "Coming Soon",
+    icon: "💻",
+    description: "Process Scheduling, Concurrency & Deadlocks, Virtual Memory Management, Paging, and File Systems.",
+    ready: false,
+    dataFile: "data/core-cs/operating-systems.js"
+  },
+  {
+    id: "computer-networks",
+    courseCode: "CS-305",
+    title: "Computer Networks",
+    track: "Core CS",
+    semester: "Core CS",
+    status: "Coming Soon",
+    icon: "🌐",
+    description: "OSI & TCP/IP Layers, Routing Algorithms, Congestion Control, DNS, HTTP/HTTPS, and Socket Programming.",
+    ready: false,
+    dataFile: "data/core-cs/computer-networks.js"
+  },
+  {
+    id: "database-systems",
+    courseCode: "CS-304",
+    title: "Database Systems",
+    track: "Core CS",
+    semester: "Core CS",
+    status: "Coming Soon",
+    icon: "🗄️",
+    description: "Relational Algebra, SQL Query Optimization, Normalization (1NF–BCNF), ACID Transactions, and Indexing.",
+    ready: false,
+    dataFile: "data/core-cs/database-systems.js"
+  }
 ];
+
+window.SUBJECTS_DATA = SUBJECTS_DATA;

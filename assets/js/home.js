@@ -1,95 +1,99 @@
+/* ==========================================================================
+   CS MCQ Hub — Home Catalog & Filtering Controller
+   ========================================================================== */
+
 (function () {
-    const subjectGrid = document.getElementById("subjectGrid");
-    const searchInput = document.getElementById("searchInput");
-    const filterButtons = document.querySelectorAll(".filter-btn");
-    const totalSubjectsStat = document.getElementById("totalSubjectsStat");
-    const activeSemStat = document.getElementById("activeSemStat");
+  const catalog = Array.isArray(window.SUBJECTS_DATA) ? window.SUBJECTS_DATA : [];
+  const gridEl = document.getElementById('subjectGrid');
+  const searchInput = document.getElementById('searchInput');
+  const filterTabs = document.getElementById('filterTabs');
+  const activeTrackStat = document.getElementById('activeSemStat');
+  const totalSubjectsStat = document.getElementById('totalSubjectsStat');
 
-    let currentFilter = "7th Sem"; // Focus on 7th Sem finals by default
-    let searchQuery = "";
+  let activeFilter = 'Active Track';
+  let searchTerm = '';
 
-    // Update dynamic stats
+  function normalizeTrack(sub) {
+    const raw = (sub.track || sub.semester || 'Core CS').trim();
+    if (raw === '7th Sem') return 'Active Track';
+    if (raw === '8th Sem') return 'Electives';
+    return raw;
+  }
+
+  function updateHeroStats() {
+    const activeCount = catalog.filter(s => normalizeTrack(s) === 'Active Track').length;
+    if (activeTrackStat) {
+      activeTrackStat.textContent = `${activeCount} Subject${activeCount === 1 ? '' : 's'}`;
+    }
     if (totalSubjectsStat) {
-        const realSubjects = SUBJECTS_DATA.filter((s) => s.id !== "sem-8-placeholder");
-        totalSubjectsStat.textContent = `${realSubjects.length}`;
+      totalSubjectsStat.textContent = String(catalog.length);
     }
+  }
 
-    if (activeSemStat) {
-        const sem7Count = SUBJECTS_DATA.filter((s) => s.semester === "7th Sem").length;
-        activeSemStat.textContent = `${sem7Count} Subjects`;
-    }
+  function renderSubjects() {
+    if (!gridEl) return;
 
-    function getSubjectLink(subject) {
-        if (subject.ready) {
-            return `quiz.html?subject=${encodeURIComponent(subject.id)}`;
-        }
-        return `coming-soon.html?subject=${encodeURIComponent(subject.title)}&sem=${encodeURIComponent(subject.semester)}`;
-    }
+    const query = searchTerm.trim().toLowerCase();
+    const filtered = catalog.filter(sub => {
+      const track = normalizeTrack(sub);
+      const matchesFilter = activeFilter === 'All' || track === activeFilter;
+      if (!matchesFilter) return false;
 
-    function renderSubjects() {
-        const filtered = SUBJECTS_DATA.filter((subject) => {
-            const matchesFilter =
-                currentFilter === "All" || subject.semester === currentFilter;
-
-            const searchableText = `${subject.title} ${subject.description} ${subject.semester}`.toLowerCase();
-            const matchesSearch = searchableText.includes(searchQuery);
-
-            return matchesFilter && matchesSearch;
-        });
-
-        if (filtered.length === 0) {
-            subjectGrid.innerHTML = `
-                <div class="empty-state">
-                    <h3>No matching subjects found</h3>
-                    <p>Try clearing your search term or switching semester tabs above.</p>
-                </div>
-            `;
-            return;
-        }
-
-        subjectGrid.innerHTML = filtered
-            .map((subject) => {
-                const isCurrentSem = subject.semester === "7th Sem";
-                const badgeClass = isCurrentSem ? "sem-badge active-sem" : "sem-badge";
-                const buttonLabel = subject.ready ? "Start Practice →" : "Launch Subject";
-
-                return `
-                    <div class="subject-card">
-                        <div>
-                            <div class="card-top">
-                                <span class="subject-icon">${subject.icon}</span>
-                                <span class="${badgeClass}">${subject.semester} • ${subject.status}</span>
-                            </div>
-                            <h3>${subject.title}</h3>
-                            <p>${subject.description}</p>
-                        </div>
-                        <a class="subject-link" href="${getSubjectLink(subject)}">
-                            ${buttonLabel}
-                        </a>
-                    </div>
-                `;
-            })
-            .join("");
-    }
-
-    // Filter tab click handlers
-    filterButtons.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            filterButtons.forEach((b) => b.classList.remove("active"));
-            btn.classList.add("active");
-            currentFilter = btn.dataset.filter;
-            renderSubjects();
-        });
+      if (!query) return true;
+      const haystack = `${sub.title} ${sub.description || ''} ${track} ${sub.status || ''} ${sub.courseCode || ''}`.toLowerCase();
+      return haystack.includes(query);
     });
 
-    // Live search handler
-    if (searchInput) {
-        searchInput.addEventListener("input", (e) => {
-            searchQuery = e.target.value.trim().toLowerCase();
-            renderSubjects();
-        });
+    if (filtered.length === 0) {
+      gridEl.innerHTML = `
+        <div class="empty-catalog" style="grid-column: 1 / -1; text-align: center; padding: 48px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 22px; color: var(--muted);">
+          <h3 style="color: var(--text); margin-bottom: 6px;">No matching subjects found</h3>
+          <p>Try searching another keyword or switch to <strong>All Subjects</strong>.</p>
+        </div>
+      `;
+      return;
     }
 
-    // Initial render
-    renderSubjects();
+    gridEl.innerHTML = filtered.map(sub => {
+      const track = normalizeTrack(sub);
+      const status = sub.status || (sub.ready ? 'Exam Prep' : 'Coming Soon');
+      const targetUrl = sub.ready
+        ? `quiz.html?subject=${encodeURIComponent(sub.id)}`
+        : `coming-soon.html?subject=${encodeURIComponent(sub.id)}`;
+      const ctaLabel = sub.ready ? 'Start Practice →' : 'Coming Soon';
+      const btnClass = sub.ready ? 'card-btn' : 'card-btn disabled';
+
+      return `
+        <article class="subject-card">
+          <div class="card-top">
+            <span class="subject-icon">${sub.icon || '📘'}</span>
+            <span class="subject-badge">${track} • ${status}</span>
+          </div>
+          <h3>${sub.title}</h3>
+          <p>${sub.description || ''}</p>
+          <a href="${targetUrl}" class="${btnClass}">${ctaLabel}</a>
+        </article>
+      `;
+    }).join('');
+  }
+
+  if (filterTabs) {
+    filterTabs.addEventListener('click', (e) => {
+      const btn = e.target.closest('.filter-btn');
+      if (!btn) return;
+      activeFilter = btn.dataset.filter || 'All';
+      filterTabs.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+      renderSubjects();
+    });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      searchTerm = e.target.value;
+      renderSubjects();
+    });
+  }
+
+  updateHeroStats();
+  renderSubjects();
 })();

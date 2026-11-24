@@ -24,7 +24,7 @@
         <span class="tag">🚀 Interactive Exam Preparation Workspace</span>
         <h1>Study Smarter.<br>Revise Faster.</h1>
         <p>
-            A personal collection of interactive MCQ environments designed for university exam preparation. Open any subject and practice with searchable questions, quizzes, mock exams, saved reviews, and progress tracking.
+            A curated collection of interactive MCQ environments designed for Computer Science exam preparation. Open any subject and practice with searchable questions, quizzes, mock exams, saved reviews, and progress tracking.
         </p>
 
         <div class="hero-actions">
@@ -38,7 +38,7 @@
     <section class="stats">
         <div class="stat-card">
             <h2 id="activeSemStat">4 Subjects</h2>
-            <p>7th Sem Finals Focus</p>
+            <p>Active Study Track</p>
         </div>
         <div class="stat-card">
             <h2 id="totalSubjectsStat">9</h2>
@@ -63,8 +63,8 @@
         >
 
         <div class="filter-tabs" id="filterTabs">
-            <button class="filter-btn active" data-filter="7th Sem">🎯 7th Sem (Finals)</button>
-            <button class="filter-btn" data-filter="8th Sem">🎓 8th Sem (Upcoming)</button>
+            <button class="filter-btn active" data-filter="Active Track">⚡ Active Track</button>
+            <button class="filter-btn" data-filter="Electives">🚀 Electives</button>
             <button class="filter-btn" data-filter="Core CS">📚 Core CS</button>
             <button class="filter-btn" data-filter="All">All Subjects</button>
         </div>
@@ -78,8 +78,40 @@
         <div class="subject-grid" id="subjectGrid"></div>
     </section>
 
-    <footer>
-        Built for exam preparation • CS-MCQ-HUB
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="index.html" class="logo footer-logo">CS<span>-MCQ-HUB</span></a>
+                <p class="footer-desc">
+                    Interactive MCQ practice, randomized mock exams, and active-recall review built for Computer Science courses.
+                </p>
+                <div class="footer-pills">
+                    <span class="footer-pill">⚡ Zero-Backend</span>
+                    <span class="footer-pill">📴 Offline Ready</span>
+                    <span class="footer-pill">🌗 Light &amp; Dark UI</span>
+                </div>
+            </div>
+
+            <div class="footer-links-group">
+                <div class="footer-col">
+                    <h4>Workspace</h4>
+                    <a href="#subjects">Browse Subjects</a>
+                    <a href="quiz.html?subject=deep-learning">Deep Learning Bank</a>
+                    <a href="quiz.html?subject=pdc">PDC Bank</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Project</h4>
+                    <a href="https://github.com/asad-ali-sajjad/cs-mcq-hub" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+                    <a href="https://github.com/asad-ali-sajjad/cs-mcq-hub/issues" target="_blank" rel="noopener noreferrer">Report an Issue</a>
+                    <a href="#top" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">Back to Top ↑</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <span>Crafted for focused exam preparation • <strong>CS-MCQ-HUB</strong></span>
+            <span>Open-source static study workspace</span>
+        </div>
     </footer>
 
     <script src="assets/js/theme.js"></script>

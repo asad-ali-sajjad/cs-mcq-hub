@@ -176,3 +176,130 @@ footer {
     color: var(--muted);
     font-size: 0.95rem;
 }
+
+/* ==========================================================================
+   UPGRADED SITE FOOTER (Shared across index.html & quiz.html)
+   ========================================================================== */
+footer.site-footer {
+  width: 100%;
+  max-width: 1120px;
+  margin: 56px auto 32px;
+  padding: 28px 30px 22px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  text-align: left;
+  color: var(--muted);
+}
+
+footer.site-footer.quiz-footer {
+  max-width: 100%;
+  margin: 28px 0 0;
+  padding: 24px 26px 20px;
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.footer-brand {
+  max-width: 420px;
+}
+
+.footer-logo {
+  display: inline-block;
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+}
+
+.footer-desc {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.footer-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.footer-pill {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.footer-links-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 36px;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.footer-col h4 {
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text);
+  margin: 0 0 4px;
+}
+
+.footer-col a {
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  transition: color 0.16s ease, transform 0.16s ease;
+}
+
+.footer-col a:hover {
+  color: var(--primary);
+  transform: translateX(2px);
+}
+
+.footer-bottom {
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.footer-bottom strong {
+  color: var(--text);
+}
+
+@media (max-width: 768px) {
+  footer.site-footer {
+    width: calc(100% - 32px);
+    margin: 40px auto 24px;
+    padding: 22px 20px 18px;
+    border-radius: 20px;
+  }
+
+  footer.site-footer.quiz-footer {
+    width: 100%;
+    margin: 22px 0 0;
+  }
+}
