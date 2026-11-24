@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCQ Practice &amp; Review — CS MCQ Hub</title>
+  <link rel="stylesheet" href="assets/css/global.css">
+  <link rel="stylesheet" href="assets/css/quiz.css">
+</head>
+<body class="quiz-page">
+
+  <!-- Ambient Background Blobs -->
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+
+  <button class="desktop-reopen-btn" onclick="toggleSidebar()" aria-label="Open Navigation Sidebar">☰ Menu</button>
+  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeMobileSidebar()"></div>
+
+  <!-- Collapsible Sidebar -->
+  <aside class="sidebar" id="app-sidebar" aria-label="Quiz Navigation Sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-brand">
+        <span class="brand-badge-icon">⚡</span>
+        <div class="brand-text-wrap">
+          <span class="brand-title" id="sb-course-title">CS MCQ Hub</span>
+          <span class="brand-sub" id="sb-total-sub">Loading bank...</span>
+        </div>
+      </div>
+      <button class="hide-sidebar-btn" onclick="toggleSidebar()" title="Hide sidebar ([)">✕</button>
+    </div>
+
+    <div class="sidebar-subbar">
+      <a href="index.html" class="sb-back-link">← All Subjects</a>
+      <button class="sb-kbd-trigger" onclick="openKbdModal()" title="Keyboard Shortcuts (?)">⌨️ Keys <kbd>?</kbd></button>
+    </div>
+
+    <div class="sidebar-scroll">
+      <!-- Progress Telemetry -->
+      <div>
+        <div class="sb-section-title">Progress</div>
+        <div class="sb-telemetry">
+          <div class="sb-telemetry-head">
+            <span id="sb-answered-label">Completed: 0 / 0</span>
+            <span id="sb-acc-label">0%</span>
+          </div>
+          <div class="sb-track"><div class="sb-fill" id="sb-progress-fill"></div></div>
+          <div class="sb-telemetry-foot">
+            <span class="txt-ok" id="sb-ok-text">✅ 0 Correct</span>
+            <span class="txt-bad" id="sb-bad-text">❌ 0 Wrong</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Study Modes -->
+      <div>
+        <div class="sb-section-title">Study Modes</div>
+        <div class="sb-nav-list">
+          <button class="sb-nav-btn active" id="mode-study" onclick="setMode('study')">
+            <span class="sb-nav-left"><span class="sb-icon-box">📖</span><span>Study Bank</span></span>
+            <span class="sb-pill-count" id="study-total-pill">0</span>
+          </button>
+          <button class="sb-nav-btn" id="mode-practice" onclick="setMode('practice')">
+            <span class="sb-nav-left"><span class="sb-icon-box">✍️</span><span>Sequential Quiz</span></span>
+            <span class="sb-pill-count" id="quiz-progress-pill">0/0</span>
+          </button>
+          <button class="sb-nav-btn" id="mode-mock" onclick="setMode('mock')">
+            <span class="sb-nav-left"><span class="sb-icon-box">🎲</span><span>Mock Exam</span></span>
+            <span class="sb-pill-count">Test</span>
+          </button>
+          <button class="sb-nav-btn" id="mode-missed" onclick="setMode('missed')">
+            <span class="sb-nav-left"><span class="sb-icon-box">❌</span><span>Missed / Wrong</span></span>
+            <span class="sb-pill-count" id="missed-count">0</span>
+          </button>
+          <button class="sb-nav-btn" id="mode-bookmarked" onclick="setMode('bookmarked')">
+            <span class="sb-nav-left"><span class="sb-icon-box">⭐</span><span>Saved Review</span></span>
+            <span class="sb-pill-count" id="saved-count">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Compact Segmented Difficulty Filter -->
+      <div id="sb-diff-section">
+        <div class="sb-section-title">Difficulty</div>
+        <div class="sb-diff-grid">
+          <button class="sb-diff-pill active" id="diff-all" onclick="setDifficulty('all')">
+            <span>All</span>
+            <strong id="count-all">0</strong>
+          </button>
+          <button class="sb-diff-pill" id="diff-easy" onclick="setDifficulty('easy')">
+            <span>Easy</span>
+            <strong id="count-easy">0</strong>
+          </button>
+          <button class="sb-diff-pill" id="diff-medium" onclick="setDifficulty('medium')">
+            <span>Med</span>
+            <strong id="count-medium">0</strong>
+          </button>
+          <button class="sb-diff-pill" id="diff-hard" onclick="setDifficulty('hard')">
+            <span>Hard</span>
+            <strong id="count-hard">0</strong>
+          </button>
+        </div>
+      </div>
+
+      <!-- Search & Tools -->
+      <div id="sb-tools-section">
+        <div class="sb-section-title">Search &amp; Tools</div>
+        <input type="text" id="search-box" class="sb-search" placeholder="🔍 Keyword or #14..." oninput="onSearch()">
+        <div class="sb-util-grid">
+          <button class="sb-util-btn" id="shuffle-opt-btn" onclick="toggleShuffleOptions()">🔀 Shuffle</button>
+          <button class="sb-util-btn sb-reset-btn" id="reset-progress-btn" onclick="resetProgress()" title="Reset Sequential Quiz answers">↺ Reset</button>
+        </div>
+        <button class="sb-upload-btn" onclick="openUploadModal()">
+          📤 Upload / Format Guide
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Workspace -->
+  <div class="app-shell">
+    <!-- Clean Top Navbar matching index.html -->
+    <header class="quiz-topbar" id="top">
+      <div class="quiz-topbar-inner">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Open Navigation Menu">☰</button>
+          <a href="index.html" class="logo">CS<span>-MCQ-HUB</span></a>
+        </div>
+        <div class="topbar-right">
+          <button class="topbar-action-btn" onclick="openUploadModal()" title="Upload Custom MCQ File">📤 <span class="desktop-only">Upload</span></button>
+          <button class="topbar-action-btn" onclick="openKbdModal()" title="Interactive Keyboard Shortcuts (?)">⌨️ <span class="desktop-only">Shortcuts</span></button>
+          <button class="theme-btn" id="themeBtn">🌙 Dark</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="quiz-main">
+      <!-- Subject Hero Card -->
+      <section class="quiz-hero-card">
+        <span class="tag quiz-code-tag" id="hero-code">LOADING</span>
+        <h1 id="hero-title">Loading Subject...</h1>
+        <p class="hero-subheading" id="hero-sub">Preparing question bank...</p>
+        <div class="topic-filter-bar" id="topic-filter-bar" style="display:none;"></div>
+      </section>
+
+      <!-- Stats & Pagination Bar -->
+      <div class="stats-bar" id="standard-stats-bar">
+        <div class="stats-pills">
+          <span class="stat-badge" id="showing-badge">0 of 0</span>
+          <span class="stat-badge green" id="correct-badge">✅ 0</span>
+          <span class="stat-badge red" id="wrong-badge">❌ 0</span>
+          <button class="action-btn practice-reset-inline" id="practice-reset-btn" style="display:none;" onclick="resetProgress()" title="Reset Sequential Quiz answers">↺ Reset Quiz</button>
+          <button class="action-btn" id="clear-filters-btn" style="display:none;" onclick="clearAllFilters()">✕ Clear</button>
+        </div>
+        <div class="page-controls">
+          <select id="jump-select" class="range-select" onchange="jumpToBatch(this.value)" aria-label="Jump to question range"></select>
+          <select id="per-page-select" class="range-select" onchange="changePerPage(this.value)" aria-label="Questions per page">
+            <option value="50" selected>50 / page</option>
+            <option value="100">100 / page</option>
+            <option value="9999">Show All</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="undo-toast-area" style="display:none;"></div>
+      <div id="review-header-area" style="display:none;"></div>
+      <div id="mock-area" style="display:none;"></div>
+      <section class="mcq-container" id="mcq-list"></section>
+
+      <footer>
+        Built for exam preparation • CS-MCQ-HUB
+      </footer>
+    </main>
+  </div>
+
+  <!-- =====================================================================
+       MODAL 1: Upload MCQ Bank & Format Specification
+       ===================================================================== -->
+  <div class="hub-modal-backdrop" id="upload-modal" onclick="if(event.target===this) closeModals()">
+    <div class="hub-modal" role="dialog" aria-modal="true" aria-labelledby="upload-modal-title">
+      <div class="hub-modal-head">
+        <div>
+          <h2 id="upload-modal-title">📤 Upload MCQ Bank (.json / .js)</h2>
+          <p>Load any question bank immediately in the browser or download a template to test.</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeModals()" aria-label="Close Modal">✕</button>
+      </div>
+
+      <div class="hub-modal-body">
+        <!-- Dropzone -->
+        <div class="upload-dropzone" id="upload-dropzone"
+             onclick="document.getElementById('mcq-file-upload').click()"
+             ondragover="event.preventDefault(); this.classList.add('dragover')"
+             ondragleave="this.classList.remove('dragover')"
+             ondrop="handleFileDrop(event)">
+          <div class="drop-icon">📂</div>
+          <div class="drop-title">Click to choose a file or drag &amp; drop here</div>
+          <div class="drop-sub">Accepted formats: <code>.json</code> or <code>.js</code> (UTF-8 plain text, max 10 MB)</div>
+          <input type="file" id="mcq-file-upload" accept=".js,.json" hidden onchange="handleFileUpload(event)">
+        </div>
+
+        <div id="upload-feedback" class="upload-feedback" style="display:none;"></div>
+
+        <!-- Format Rules -->
+        <div class="format-rules-box">
+          <h3>📋 Format Requirements &amp; Rules</h3>
+          <ul class="rules-list">
+            <li><strong>Required keys per question:</strong> <code>q</code> (question text), <code>A</code>, <code>B</code>, <code>C</code>, <code>D</code> (all 4 options), and <code>ans</code> (<code>"A"</code>, <code>"B"</code>, <code>"C"</code>, or <code>"D"</code>).</li>
+            <li><strong>Optional keys:</strong> <code>num</code> (auto-numbered if omitted), <code>explanation</code> / <code>exp</code> (shown in answer banner), <code>difficulty</code> (<code>"easy"</code>, <code>"medium"</code>, <code>"hard"</code>), and <code>topic</code>.</li>
+            <li><strong>JS Restriction:</strong> <code>.js</code> files must assign <code>window.EXAM_DATA = { ... }</code> or <code>const MCQS = [ ... ]</code> without ES module <code>import</code> / <code>export</code> statements.</li>
+          </ul>
+        </div>
+
+        <!-- Live Sample Viewer + Download -->
+        <div class="sample-box">
+          <div class="sample-toolbar">
+            <div class="sample-tabs">
+              <button class="sample-tab active" id="sample-tab-json" onclick="switchSampleTab('json')">sample-mcqs.json</button>
+              <button class="sample-tab" id="sample-tab-js" onclick="switchSampleTab('js')">sample-mcqs.js</button>
+            </div>
+            <div class="sample-actions">
+              <button class="action-btn" id="copy-sample-btn" onclick="copySampleCode()">📋 Copy</button>
+              <button class="action-btn" onclick="downloadSampleFile('json')">⬇ .json</button>
+              <button class="action-btn" onclick="downloadSampleFile('js')">⬇ .js</button>
+            </div>
+          </div>
+          <pre class="sample-pre"><code id="sample-code-block"></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       MODAL 2: Interactive Keyboard Shortcuts
+       ===================================================================== -->
+  <div class="hub-modal-backdrop" id="kbd-modal" onclick="if(event.target===this) closeModals()">
+    <div class="hub-modal kbd-modal-card" role="dialog" aria-modal="true" aria-labelledby="kbd-modal-title">
+      <div class="hub-modal-head">
+        <div>
+          <h2 id="kbd-modal-title">⌨️ Interactive Keyboard Shortcuts</h2>
+          <p>Press any key on your keyboard to test it live, or click a row to run the action.</p>
+        </div>
+        <button class="modal-close-btn" onclick="closeModals()" aria-label="Close Modal">✕</button>
+      </div>
+
+      <div class="hub-modal-body">
+        <div class="kbd-interactive-grid">
+          <button class="kbd-item-btn" data-keys="n,j,arrowdown" onclick="demoShortcutAction('next')">
+            <span class="kbd-item-info">
+              <strong>Next Question</strong>
+              <small>Advance &amp; scroll to next card</small>
+            </span>
+            <span class="kbd-keys"><kbd>N</kbd> / <kbd>J</kbd> / <kbd>↓</kbd></span>
+          </button>
+
+          <button class="kbd-item-btn" data-keys="k,arrowup" onclick="demoShortcutAction('prev')">
+            <span class="kbd-item-info">
+              <strong>Previous Question</strong>
+              <small>Move focus up to previous card</small>
+            </span>
+            <span class="kbd-keys"><kbd>K</kbd> / <kbd>↑</kbd></span>
+          </button>
+
+          <button class="kbd-item-btn" data-keys="a,b,c,d,1,2,3,4" onclick="demoShortcutAction('option')">
+            <span class="kbd-item-info">
+              <strong>Select Answer Option</strong>
+              <small>Pick Option A, B, C, or D in Quiz/Mock</small>
+            </span>
+            <span class="kbd-keys"><kbd>A</kbd>–<kbd>D</kbd> or <kbd>1</kbd>–<kbd>4</kbd></span>
+          </button>
+
+          <button class="kbd-item-btn" data-keys="t" onclick="demoShortcutAction('top')">
+            <span class="kbd-item-info">
+              <strong>Scroll to Top</strong>
+              <small>Jump back to the top &amp; first card</small>
+            </span>
+            <span class="kbd-keys"><kbd>T</kbd></span>
+          </button>
+
+          <button class="kbd-item-btn" data-keys="s" onclick="demoShortcutAction('save')">
+            <span class="kbd-item-info">
+              <strong>Bookmark / Save Card</strong>
+              <small>Toggle star on the focused question</small>
+            </span>
+            <span class="kbd-keys"><kbd>S</kbd></span>
+          </button>
+
+          <button class="kbd-item-btn" data-keys="e" onclick="demoShortcutAction('reveal')">
+            <span class="kbd-item-info">
+              <strong>Reveal Answer</strong>
+              <small>Show answer in Sequential Quiz mode</small>
+            </span>
+            <span class="kbd-keys"><kbd>E</kbd></span>
+          </button>
+
+          <button class="kbd-item-btn" data-keys="/" onclick="demoShortcutAction('search')">
+            <span class="kbd-item-info">
+              <strong>Quick Search</strong>
+              <small>Open sidebar &amp; focus search box</small>
+            </span>
+            <span class="kbd-keys"><kbd>/</kbd></span>
+          </button>
+
+          <button class="kbd-item-btn" data-keys="[" onclick="demoShortcutAction('sidebar')">
+            <span class="kbd-item-info">
+              <strong>Toggle Sidebar</strong>
+              <small>Collapse or expand navigation panel</small>
+            </span>
+            <span class="kbd-keys"><kbd>[</kbd></span>
+          </button>
+
+          <button class="kbd-item-btn" data-keys="?,escape" onclick="closeModals()">
+            <span class="kbd-item-info">
+              <strong>Shortcuts / Close</strong>
+              <small>Toggle this dialog or close modals</small>
+            </span>
+            <span class="kbd-keys"><kbd>?</kbd> / <kbd>Esc</kbd></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Mobile & Quick-Nav Dock (Bottom-Right) -->
+  <div class="floating-nav-dock" id="floating-nav-dock" aria-label="Quick Question Navigation">
+    <button class="float-nav-btn float-next-btn" id="floating-next-btn" onclick="goToNextQuestion()" title="Next Question (N)">Next ↓</button>
+    <button class="float-nav-btn float-top-btn" id="floating-top-btn" onclick="scrollToTop()" title="Back to Top (T)">↑ Top</button>
+  </div>
+
+  <script src="assets/js/theme.js"></script>
+  <script src="assets/js/subjects-data.js"></script>
+  <script src="assets/js/quiz-engine.js"></script>
+</body>
+</html>

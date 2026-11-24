@@ -18,7 +18,8 @@ const SUBJECTS_DATA = [
         status: "Finals Prep",
         icon: "⚡",
         description: "Parallel Architectures, MPI, OpenMP, Speedup Laws (Amdahl & Gustafson), Synchronization, and Distributed Systems.",
-        ready: false
+        ready: true,
+        dataFile: "data/sem-7/pdc.js"
     },
     {
         id: "deep-learning",
@@ -27,7 +28,8 @@ const SUBJECTS_DATA = [
         status: "Finals Prep",
         icon: "🧠",
         description: "Neural Networks, Backpropagation, CNNs, RNNs, Transformers, Optimization Algorithms, and Regularization.",
-        ready: false
+        ready: true,
+        dataFile: "data/sem-7/deep-learning.js"
     },
     {
         id: "cloud-computing",
