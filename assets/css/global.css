@@ -1,0 +1,178 @@
+:root {
+    --bg: #f6f8fc;
+    --card: #ffffff;
+    --text: #162033;
+    --muted: #66758f;
+    --border: #e7edf5;
+
+    --primary: #5b7cff;
+    --primary-light: #edf2ff;
+    --accent-green: #10b981;
+    --accent-green-light: #ecfdf5;
+
+    --shadow:
+        0 2px 8px rgba(15, 23, 42, 0.04),
+        0 15px 40px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="dark"] {
+    --bg: #0f172a;
+    --card: #172033;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --border: #273449;
+
+    --primary: #7395ff;
+    --primary-light: #1f2f57;
+    --accent-green: #34d399;
+    --accent-green-light: #132e2b;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, "Segoe UI", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* =======================
+   BACKGROUND BLOBS
+======================= */
+.blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(90px);
+    z-index: -1;
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+.blob1 {
+    width: 320px;
+    height: 320px;
+    background: #7ea1ff;
+    top: -120px;
+    left: -100px;
+}
+
+.blob2 {
+    width: 350px;
+    height: 350px;
+    background: #8df2d7;
+    right: -120px;
+    top: 100px;
+}
+
+.blob3 {
+    width: 280px;
+    height: 280px;
+    background: #c5b1ff;
+    bottom: -100px;
+    left: 40%;
+}
+
+/* =======================
+   HEADER & NAV
+======================= */
+header {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.4rem;
+    font-weight: 800;
+    text-decoration: none;
+    color: var(--text);
+}
+
+.logo span {
+    color: var(--primary);
+}
+
+.theme-btn {
+    border: 1px solid var(--border);
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: var(--card);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    color: var(--text);
+    font-weight: 600;
+    transition: transform 0.2s ease;
+}
+
+.theme-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* =======================
+   SHARED TAGS & BUTTONS
+======================= */
+.tag {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 18px;
+}
+
+.btn {
+    display: inline-block;
+    text-decoration: none;
+    padding: 14px 22px;
+    border-radius: 14px;
+    font-weight: 700;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #ffffff;
+}
+
+.btn-secondary {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+
+/* =======================
+   FOOTER
+======================= */
+footer {
+    margin-top: auto;
+    text-align: center;
+    padding: 36px 20px;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
