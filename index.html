@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CS MCQ Hub</title>
+    <title data-config-title-format="{brand.name}"></title>
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/home.css">
 </head>
@@ -15,21 +15,21 @@
 
     <header>
         <div class="nav">
-            <a href="index.html" class="logo">CS<span>-MCQ-HUB</span></a>
+            <a href="index.html" class="logo" data-config-logo></a>
             <button class="theme-btn" id="themeBtn">🌙 Dark</button>
         </div>
     </header>
 
     <section class="hero">
-        <span class="tag">🚀 Interactive Exam Preparation Workspace</span>
-        <h1>Study Smarter.<br>Revise Faster.</h1>
-        <p>
+        <span class="tag" data-config-text="brand.heroTag">🚀 Interactive Exam Preparation Workspace</span>
+        <h1 data-config-html="brand.heroHeadline">Study Smarter.<br>Revise Faster.</h1>
+        <p data-config-text="brand.heroDescription">
             A curated collection of interactive MCQ environments designed for Computer Science exam preparation. Open any subject and practice with searchable questions, quizzes, mock exams, saved reviews, and progress tracking.
         </p>
 
         <div class="hero-actions">
             <a href="#subjects" class="btn btn-primary">Browse Subjects</a>
-            <a href="https://github.com/asad-ali-sajjad/cs-mcq-hub" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+            <a href="#" data-config-href="links.repoUrl" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
                 GitHub Repository
             </a>
         </div>
@@ -38,7 +38,7 @@
     <section class="stats">
         <div class="stat-card">
             <h2 id="activeSemStat">4 Subjects</h2>
-            <p>Active Study Track</p>
+            <p data-config-text="catalog.activeTrackStatLabel">Active Study Track</p>
         </div>
         <div class="stat-card">
             <h2 id="totalSubjectsStat">9</h2>
@@ -62,12 +62,7 @@
             id="searchInput"
         >
 
-        <div class="filter-tabs" id="filterTabs">
-            <button class="filter-btn active" data-filter="Active Track">⚡ Active Track</button>
-            <button class="filter-btn" data-filter="Electives">🚀 Electives</button>
-            <button class="filter-btn" data-filter="Core CS">📚 Core CS</button>
-            <button class="filter-btn" data-filter="All">All Subjects</button>
-        </div>
+        <div class="filter-tabs" id="filterTabs"></div>
     </section>
 
     <section class="subjects" id="subjects">
@@ -81,8 +76,8 @@
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-brand">
-                <a href="index.html" class="logo footer-logo">CS<span>-MCQ-HUB</span></a>
-                <p class="footer-desc">
+                <a href="index.html" class="logo footer-logo" data-config-logo></a>
+                <p class="footer-desc" data-config-text="brand.footerTagline">
                     Interactive MCQ practice, randomized mock exams, and active-recall review built for Computer Science courses.
                 </p>
                 <div class="footer-pills">
@@ -96,24 +91,25 @@
                 <div class="footer-col">
                     <h4>Workspace</h4>
                     <a href="#subjects">Browse Subjects</a>
-                    <a href="quiz.html?subject=deep-learning">Deep Learning Bank</a>
-                    <a href="quiz.html?subject=pdc">PDC Bank</a>
+                    <a href="#" data-config-featured="0">Deep Learning Bank</a>
+                    <a href="#" data-config-featured="1">PDC Bank</a>
                 </div>
                 <div class="footer-col">
                     <h4>Project</h4>
-                    <a href="https://github.com/asad-ali-sajjad/cs-mcq-hub" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
-                    <a href="https://github.com/asad-ali-sajjad/cs-mcq-hub/issues" target="_blank" rel="noopener noreferrer">Report an Issue</a>
+                    <a href="#" data-config-href="links.repoUrl" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+                    <a href="#" data-config-href="links.issuesUrl" target="_blank" rel="noopener noreferrer">Report an Issue</a>
                     <a href="#top" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">Back to Top ↑</a>
                 </div>
             </div>
         </div>
 
         <div class="footer-bottom">
-            <span>Crafted for focused exam preparation • <strong>CS-MCQ-HUB</strong></span>
+            <span><span data-config-text="brand.copyrightLine">Crafted for focused exam preparation</span> • <strong data-config-text="brand.name"></strong></span>
             <span>Open-source static study workspace</span>
         </div>
     </footer>
 
+    <script src="assets/js/config.js"></script>
     <script src="assets/js/theme.js"></script>
     <script src="assets/js/subjects-data.js"></script>
     <script src="assets/js/home.js"></script>

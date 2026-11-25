@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MCQ Practice &amp; Review — CS MCQ Hub</title>
+  <title data-config-title-format="MCQ Practice &amp; Review — {brand.name}">MCQ Practice &amp; Review</title>
   <link rel="stylesheet" href="assets/css/global.css">
   <link rel="stylesheet" href="assets/css/quiz.css">
 </head>
@@ -23,7 +23,7 @@
       <div class="sidebar-brand">
         <span class="brand-badge-icon">⚡</span>
         <div class="brand-text-wrap">
-          <span class="brand-title" id="sb-course-title">CS MCQ Hub</span>
+          <span class="brand-title" id="sb-course-title" data-config-text="brand.name"></span>
           <span class="brand-sub" id="sb-total-sub">Loading bank...</span>
         </div>
       </div>
@@ -124,7 +124,7 @@
       <div class="quiz-topbar-inner">
         <div class="topbar-left">
           <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Open Navigation Menu">☰</button>
-          <a href="index.html" class="logo">CS<span>-MCQ-HUB</span></a>
+          <a href="index.html" class="logo" data-config-logo></a>
         </div>
         <div class="topbar-right">
           <button class="topbar-action-btn" onclick="openUploadModal()" title="Upload Custom MCQ File">📤 <span class="desktop-only">Upload</span></button>
@@ -171,8 +171,8 @@
       <footer class="site-footer quiz-footer">
         <div class="footer-inner">
           <div class="footer-brand">
-            <a href="index.html" class="logo footer-logo">CS<span>-MCQ-HUB</span></a>
-            <p class="footer-desc">
+            <a href="index.html" class="logo footer-logo" data-config-logo></a>
+            <p class="footer-desc" data-config-text="brand.quizFooterTagline">
               Focused MCQ practice, mock exams, and active-recall revision.
             </p>
           </div>
@@ -188,7 +188,7 @@
         </div>
 
         <div class="footer-bottom">
-          <span>Built for exam preparation • <strong>CS-MCQ-HUB</strong></span>
+          <span><span data-config-text="brand.copyrightLine">Crafted for focused exam preparation</span> • <strong data-config-text="brand.name"></strong></span>
           <span>Offline-ready study workspace</span>
         </div>
       </footer>
@@ -218,7 +218,7 @@
              ondrop="handleFileDrop(event)">
           <div class="drop-icon">📂</div>
           <div class="drop-title">Click to choose a file or drag &amp; drop here</div>
-          <div class="drop-sub">Accepted formats: <code>.json</code> or <code>.js</code> (UTF-8 plain text, max 10 MB)</div>
+          <div class="drop-sub">Accepted formats: <code>.json</code> or <code>.js</code> (UTF-8 plain text, max <span data-config-text="quizDefaults.maxUploadSizeMB"></span> MB)</div>
           <input type="file" id="mcq-file-upload" accept=".js,.json" hidden onchange="handleFileUpload(event)">
         </div>
 
@@ -350,6 +350,7 @@
     <button class="float-nav-btn float-top-btn" id="floating-top-btn" onclick="scrollToTop()" title="Back to Top (T)">↑ Top</button>
   </div>
 
+  <script src="assets/js/config.js"></script>
   <script src="assets/js/theme.js"></script>
   <script src="assets/js/subjects-data.js"></script>
   <script src="assets/js/quiz-engine.js"></script>

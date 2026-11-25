@@ -1,16 +1,25 @@
 /* ==========================================================================
    CS MCQ Hub — Central Subject Registry
-   Evergreen tracks ('Active Track', 'Electives', 'Core CS') & status tags
+   Subject metadata and readiness sourced from the site configuration
    ========================================================================== */
+
+const SUBJECTS_CFG = window.SITE_CONFIG || {};
+const catalogConfig = SUBJECTS_CFG.catalog || {};
+const configuredTracks = Array.isArray(catalogConfig.tracks) ? catalogConfig.tracks : [];
+const ACTIVE_TRACK = (configuredTracks[0] && configuredTracks[0].id) || catalogConfig.defaultTrack || 'Active Track';
+const ELECTIVES_TRACK = (configuredTracks[1] && configuredTracks[1].id) || 'Electives';
+const CORE_CS_TRACK = (configuredTracks[2] && configuredTracks[2].id) || 'Core CS';
+const READY_STATUS = catalogConfig.defaultStatusReady || 'Exam Prep';
+const UPCOMING_STATUS = catalogConfig.defaultStatusUpcoming || 'Coming Soon';
 
 const SUBJECTS_DATA = [
   {
     id: "automata",
     courseCode: "CS-311",
     title: "Theory of Automata",
-    track: "Active Track",
-    semester: "Active Track",
-    status: "Exam Prep",
+    track: ACTIVE_TRACK,
+    semester: ACTIVE_TRACK,
+    status: READY_STATUS,
     icon: "⚙️",
     description: "Deterministic & Non-Deterministic Finite Automata, Regular Expressions, Context-Free Grammars, Pushdown Automata, and Turing Machines.",
     ready: true,
@@ -20,9 +29,9 @@ const SUBJECTS_DATA = [
     id: "pdc",
     courseCode: "COS601320",
     title: "Parallel & Distributed Computing",
-    track: "Active Track",
-    semester: "Active Track",
-    status: "Exam Prep",
+    track: ACTIVE_TRACK,
+    semester: ACTIVE_TRACK,
+    status: READY_STATUS,
     icon: "⚡",
     description: "Parallel Architectures, MPI, OpenMP, Speedup Laws (Amdahl & Gustafson), Synchronization, and Distributed Systems.",
     ready: true,
@@ -32,9 +41,9 @@ const SUBJECTS_DATA = [
     id: "deep-learning",
     courseCode: "CS-412",
     title: "Deep Learning",
-    track: "Active Track",
-    semester: "Active Track",
-    status: "Exam Prep",
+    track: ACTIVE_TRACK,
+    semester: ACTIVE_TRACK,
+    status: READY_STATUS,
     icon: "🧠",
     description: "Neural Networks, Backpropagation, CNNs, RNNs, Transformers, Optimization Algorithms, and Regularization.",
     ready: true,
@@ -44,9 +53,9 @@ const SUBJECTS_DATA = [
     id: "cloud-computing",
     courseCode: "CS-415",
     title: "Cloud Computing",
-    track: "Active Track",
-    semester: "Active Track",
-    status: "Exam Prep",
+    track: ACTIVE_TRACK,
+    semester: ACTIVE_TRACK,
+    status: READY_STATUS,
     icon: "☁️",
     description: "Virtualization, Service Models (IaaS, PaaS, SaaS), Cloud Architecture, Containers, Orchestration, and Distributed Storage.",
     ready: true,
@@ -56,9 +65,9 @@ const SUBJECTS_DATA = [
     id: "information-security",
     courseCode: "CS-421",
     title: "Information Security",
-    track: "Electives",
-    semester: "Electives",
-    status: "Coming Soon",
+    track: ELECTIVES_TRACK,
+    semester: ELECTIVES_TRACK,
+    status: UPCOMING_STATUS,
     icon: "🛡️",
     description: "Cryptography, Public-Key Infrastructure, Network Security Protocols, Authentication, and Access Control Models.",
     ready: false,
@@ -68,9 +77,9 @@ const SUBJECTS_DATA = [
     id: "compiler-construction",
     courseCode: "CS-424",
     title: "Compiler Construction",
-    track: "Electives",
-    semester: "Electives",
-    status: "Coming Soon",
+    track: ELECTIVES_TRACK,
+    semester: ELECTIVES_TRACK,
+    status: UPCOMING_STATUS,
     icon: "🛠️",
     description: "Lexical Analysis, Syntax Parsing (LL/LR), Semantic Analysis, Intermediate Code Generation, and Code Optimization.",
     ready: false,
@@ -80,9 +89,9 @@ const SUBJECTS_DATA = [
     id: "operating-systems",
     courseCode: "CS-302",
     title: "Operating Systems",
-    track: "Core CS",
-    semester: "Core CS",
-    status: "Coming Soon",
+    track: CORE_CS_TRACK,
+    semester: CORE_CS_TRACK,
+    status: UPCOMING_STATUS,
     icon: "💻",
     description: "Process Scheduling, Concurrency & Deadlocks, Virtual Memory Management, Paging, and File Systems.",
     ready: false,
@@ -92,9 +101,9 @@ const SUBJECTS_DATA = [
     id: "computer-networks",
     courseCode: "CS-305",
     title: "Computer Networks",
-    track: "Core CS",
-    semester: "Core CS",
-    status: "Coming Soon",
+    track: CORE_CS_TRACK,
+    semester: CORE_CS_TRACK,
+    status: UPCOMING_STATUS,
     icon: "🌐",
     description: "OSI & TCP/IP Layers, Routing Algorithms, Congestion Control, DNS, HTTP/HTTPS, and Socket Programming.",
     ready: false,
@@ -104,9 +113,9 @@ const SUBJECTS_DATA = [
     id: "database-systems",
     courseCode: "CS-304",
     title: "Database Systems",
-    track: "Core CS",
-    semester: "Core CS",
-    status: "Coming Soon",
+    track: CORE_CS_TRACK,
+    semester: CORE_CS_TRACK,
+    status: UPCOMING_STATUS,
     icon: "🗄️",
     description: "Relational Algebra, SQL Query Optimization, Normalization (1NF–BCNF), ACID Transactions, and Indexing.",
     ready: false,

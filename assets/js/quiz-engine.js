@@ -4,15 +4,27 @@
    sample template downloads, and interactive keyboard shortcuts modal.
    ========================================================================== */
 
+const CFG = window.SITE_CONFIG || {};
+const quizDefaults = CFG.quizDefaults || {};
+const storageConfig = CFG.storage || {};
+const brandConfig = CFG.brand || {};
+const fallbackSubjectId = quizDefaults.fallbackSubjectId || 'pdc';
+const fallbackCourseCode = quizDefaults.fallbackCourseCode || 'CS-HUB';
+const fallbackTitle = quizDefaults.fallbackTitle || 'CS MCQ Practice';
+const fallbackSubtitle = quizDefaults.fallbackSubtitle || 'Interactive MCQ Practice & Exam Review';
+const defaultPerPage = quizDefaults.defaultPerPage || 50;
+const perPageOptions = Array.isArray(quizDefaults.perPageOptions) ? quizDefaults.perPageOptions : [50, 100, 9999];
+const defaultMockCount = quizDefaults.defaultMockCount || 25;
+const mockCountOptions = Array.isArray(quizDefaults.mockCountOptions) ? quizDefaults.mockCountOptions : [10, 25, 50, 100];
+const undoToastDurationMs = quizDefaults.undoToastDurationMs || 6000;
+const maxUploadSizeMB = quizDefaults.maxUploadSizeMB || 10;
 
-
-
-let ACTIVE_SUBJECT_ID = 'default';
+let ACTIVE_SUBJECT_ID = fallbackSubjectId;
 let EXAM_META = {
-  id: 'default',
-  courseCode: 'CS-HUB',
-  title: 'CS MCQ Practice',
-  subtitle: 'Interactive MCQ Practice & Exam Review'
+  id: fallbackSubjectId,
+  courseCode: fallbackCourseCode,
+  title: fallbackTitle,
+  subtitle: fallbackSubtitle
 };
 
 let MCQS_LIST = [];
@@ -32,7 +44,7 @@ let searchQuery = '';
 let shuffleOptionsEnabled = false;
 let activeCardIndex = 0;
 let currentPage = 1;
-let perPage = 50;
+let perPage = defaultPerPage;
 
 let missedRetryMode = false;
 let missedRetryAnswers = {};
@@ -48,7 +60,7 @@ let state = { selected: {}, revealed: {}, missed: {}, bookmarked: {} };
 
 let mockState = {
   active: false,
-  count: 25,
+  count: defaultMockCount,
   difficulty: 'all',
   feedbackMode: 'instant',
   questions: [],
@@ -156,7 +168,7 @@ const SAMPLE_JS_TEXT = `window.EXAM_DATA = {
    -------------------------------------------------------------------------- */
 function getRequestedSubjectId() {
   const params = new URLSearchParams(window.location.search);
-  return (params.get('subject') || params.get('id') || params.get('exam') || 'pdc').trim();
+  return (params.get('subject') || params.get('id') || params.get('exam') || fallbackSubjectId).trim();
 }
 
 function getRegistryCandidates() {
@@ -230,9 +242,9 @@ function extractLoadedDataset(subjectId, registryEntry) {
     rawMcqs = window.MCQS;
   }
 
-  const title = (rawObj && rawObj.title) || (registryEntry && (registryEntry.title || registryEntry.name)) || subjectId.toUpperCase();
-  const courseCode = (rawObj && (rawObj.courseCode || rawObj.code)) || (registryEntry && (registryEntry.courseCode || registryEntry.code)) || 'CS-HUB';
-  const subtitle = (rawObj && rawObj.subtitle) || (registryEntry && (registryEntry.subtitle || registryEntry.description)) || 'Interactive MCQ Practice, Mock Exams & Mistake Review';
+  const title = (rawObj && rawObj.title) || (registryEntry && (registryEntry.title || registryEntry.name)) || fallbackTitle;
+  const courseCode = (rawObj && (rawObj.courseCode || rawObj.code)) || (registryEntry && (registryEntry.courseCode || registryEntry.code)) || fallbackCourseCode;
+  const subtitle = (rawObj && rawObj.subtitle) || (registryEntry && (registryEntry.subtitle || registryEntry.description)) || fallbackSubtitle;
   const topics = (rawObj && Array.isArray(rawObj.topics)) ? rawObj.topics : [];
 
   return {
@@ -347,7 +359,7 @@ function initializeDataset(dataset) {
 
 function applyHeaderAndTopicUI() {
   const total = MCQS_LIST.length;
-  document.title = `${EXAM_META.title} (${total} MCQs) — CS MCQ Hub`;
+  document.title = `${EXAM_META.title} (${total} MCQs) — ${brandConfig.name || 'CS MCQ Hub'}`;
   document.getElementById('sb-course-title').textContent = EXAM_META.title;
   document.getElementById('sb-total-sub').textContent = `${EXAM_META.courseCode} • ${total} MCQs`;
   document.getElementById('study-total-pill').textContent = total;
@@ -464,8 +476,8 @@ function processUploadedFile(file) {
     showUploadFeedback('error', 'Unsupported file type. Please upload a .json or .js file.');
     return;
   }
-  if (file.size > 10 * 1024 * 1024) {
-    showUploadFeedback('error', 'File exceeds the 10 MB size limit.');
+  if (file.size > maxUploadSizeMB * 1024 * 1024) {
+    showUploadFeedback('error', `File exceeds the ${maxUploadSizeMB} MB size limit.`);
     return;
   }
 
@@ -588,7 +600,7 @@ function demoShortcutAction(action) {
    4. Per-Subject LocalStorage Persistence
    -------------------------------------------------------------------------- */
 function getStorageKey() {
-  return `cs_mcq_hub_${ACTIVE_SUBJECT_ID}_v1`;
+  return `${storageConfig.prefix || 'cs_mcq_hub_'}${ACTIVE_SUBJECT_ID}_${storageConfig.version || 'v1'}`;
 }
 
 function loadSubjectProgress() {
@@ -639,7 +651,7 @@ function showUndoToast(message, type, snapshot) {
   undoTimer = setTimeout(() => {
     area.style.display = 'none';
     undoBackup = null;
-  }, 6000);
+  }, undoToastDurationMs);
 }
 
 function triggerUndo() {
@@ -783,6 +795,16 @@ function changePerPage(val) {
   currentPage = 1;
   activeCardIndex = 0;
   render();
+}
+
+function configureQuizControls() {
+  const perPageSelect = document.getElementById('per-page-select');
+  if (perPageSelect) {
+    perPageSelect.innerHTML = perPageOptions.map((count) => {
+      const label = count >= 9999 ? 'Show All' : `${count} / page`;
+      return `<option value="${count}"${count === defaultPerPage ? ' selected' : ''}>${label}</option>`;
+    }).join('');
+  }
 }
 
 function jumpToBatch(pageNum) {
@@ -1131,10 +1153,7 @@ function renderMockView() {
           <div class="mock-field">
             <label for="mock-count-select">Question Count</label>
             <select id="mock-count-select">
-              <option value="10" ${mockState.count === 10 ? 'selected' : ''}>10 Questions (Quick Drill)</option>
-              <option value="25" ${mockState.count === 25 ? 'selected' : ''}>25 Questions (Standard Quiz)</option>
-              <option value="50" ${mockState.count === 50 ? 'selected' : ''}>50 Questions (Midterm Simulation)</option>
-              <option value="100" ${mockState.count === 100 ? 'selected' : ''}>100 Questions (Marathon Test)</option>
+              ${mockCountOptions.map(count => `<option value="${count}"${mockState.count === count ? ' selected' : ''}>${count} Questions</option>`).join('')}
             </select>
           </div>
           <div class="mock-field">
@@ -1639,6 +1658,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 (async function bootstrapQuizEngine() {
+  configureQuizControls();
   switchSampleTab('json');
 
   const subjectId = getRequestedSubjectId();

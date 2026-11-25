@@ -3,6 +3,20 @@
    ========================================================================== */
 
 (function () {
+  const CFG = window.SITE_CONFIG || {};
+  const catalogConfig = CFG.catalog || {};
+  const tracks = Array.isArray(catalogConfig.tracks) ? catalogConfig.tracks : [
+    { id: 'Active Track', label: '⚡ Active Track' },
+    { id: 'Electives', label: '🚀 Electives' },
+    { id: 'Core CS', label: '📚 Core CS' },
+    { id: 'All', label: 'All Subjects' }
+  ];
+  const defaultTrack = catalogConfig.defaultTrack || 'Active Track';
+  const activeTrack = (tracks[0] && tracks[0].id) || defaultTrack;
+  const coreTrack = (tracks[2] && tracks[2].id) || 'Core CS';
+  const electivesTrack = (tracks[1] && tracks[1].id) || 'Electives';
+  const readyStatus = catalogConfig.defaultStatusReady || 'Exam Prep';
+  const upcomingStatus = catalogConfig.defaultStatusUpcoming || 'Coming Soon';
   const catalog = Array.isArray(window.SUBJECTS_DATA) ? window.SUBJECTS_DATA : [];
   const gridEl = document.getElementById('subjectGrid');
   const searchInput = document.getElementById('searchInput');
@@ -10,18 +24,18 @@
   const activeTrackStat = document.getElementById('activeSemStat');
   const totalSubjectsStat = document.getElementById('totalSubjectsStat');
 
-  let activeFilter = 'Active Track';
+  let activeFilter = defaultTrack;
   let searchTerm = '';
 
   function normalizeTrack(sub) {
-    const raw = (sub.track || sub.semester || 'Core CS').trim();
-    if (raw === '7th Sem') return 'Active Track';
-    if (raw === '8th Sem') return 'Electives';
+    const raw = (sub.track || sub.semester || coreTrack).trim();
+    if (raw === '7th Sem') return activeTrack;
+    if (raw === '8th Sem') return electivesTrack;
     return raw;
   }
 
   function updateHeroStats() {
-    const activeCount = catalog.filter(s => normalizeTrack(s) === 'Active Track').length;
+    const activeCount = catalog.filter(s => normalizeTrack(s) === activeTrack).length;
     if (activeTrackStat) {
       activeTrackStat.textContent = `${activeCount} Subject${activeCount === 1 ? '' : 's'}`;
     }
@@ -56,11 +70,11 @@
 
     gridEl.innerHTML = filtered.map(sub => {
       const track = normalizeTrack(sub);
-      const status = sub.status || (sub.ready ? 'Exam Prep' : 'Coming Soon');
+      const status = sub.status || (sub.ready ? readyStatus : upcomingStatus);
       const targetUrl = sub.ready
         ? `quiz.html?subject=${encodeURIComponent(sub.id)}`
         : `coming-soon.html?subject=${encodeURIComponent(sub.id)}`;
-      const ctaLabel = sub.ready ? 'Start Practice →' : 'Coming Soon';
+      const ctaLabel = sub.ready ? 'Start Practice →' : upcomingStatus;
       const btnClass = sub.ready ? 'card-btn' : 'card-btn disabled';
 
       return `
@@ -78,6 +92,15 @@
   }
 
   if (filterTabs) {
+    filterTabs.replaceChildren();
+    tracks.forEach((track) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = `filter-btn${track.id === defaultTrack ? ' active' : ''}`;
+      button.dataset.filter = track.id;
+      button.textContent = track.label;
+      filterTabs.appendChild(button);
+    });
     filterTabs.addEventListener('click', (e) => {
       const btn = e.target.closest('.filter-btn');
       if (!btn) return;

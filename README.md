@@ -32,6 +32,7 @@ cs-mcq-hub/
 │   │   ├── quiz.css            # Sidebar, MCQ cards, modals & floating dock styles
 │   │   └── coming-soon.css     # Coming-soon page styles
 │   └── js/
+│       ├── config.js           # Central site branding, links, catalog & quiz settings
 │       ├── subjects-data.js    # Central subject registry (IDs, metadata, readiness & file paths)
 │       ├── home.js             # Catalog rendering, search & semester filtering
 │       ├── quiz-engine.js      # Universal quiz engine, mock generator, upload validator & shortcuts
@@ -47,18 +48,20 @@ cs-mcq-hub/
     └── sem-8/                  # 8th Semester subject banks
 ```
 
+`config.js` is loaded before the other scripts on each page and exposes its settings through `window.SITE_CONFIG`. It uses classic scripts (no ES modules) so the workspace remains usable from both `file://` and GitHub Pages.
+
 ---
 
 ## ✨ Features Built
 
 ### 1. Dynamic Multi-Subject Architecture
 - **URL-Driven Subject Loading:** Opening `quiz.html?subject=<id>` automatically resolves the subject from `subjects-data.js` (or standard `data/` folders) and injects its `.js` question bank without CORS issues.
-- **Isolated Per-Subject Storage:** Progress, missed answers, and bookmarks are saved in `localStorage` under `cs_mcq_hub_<subjectId>_v1`, preventing cross-course collisions.
+- **Isolated Per-Subject Storage:** Progress, missed answers, and bookmarks use a per-subject `localStorage` key built from the configured storage prefix and version, preventing cross-course collisions.
 - **Local File Upload & Validator:** Upload custom `.json` or `.js` question banks directly in the browser with schema validation, syntax checking, and downloadable starter templates.
 
 ### 2. Five Study & Exam Modes
 - **📖 Study Bank:** Browse all questions with answers and detailed explanations (`exp` / `explanation`) unlocked.
-- **✍️ Sequential Quiz:** Practice question-by-question with instant grading, individual Show Answer reveals, option shuffling (`🔀 Shuffle`), and an inline `↺ Reset Quiz` button with 6-second `↺ Undo` recovery.
+- **✍️ Sequential Quiz:** Practice question-by-question with instant grading, individual Show Answer reveals, option shuffling (`🔀 Shuffle`), and an inline `↺ Reset Quiz` button with configurable `↺ Undo` recovery.
 - **🎲 Mock Exam:** Generate randomized exams (10, 25, 50, or 100 questions) filtered by difficulty, supporting both Instant Feedback and Exam Mode (graded upon submission).
 - **❌ Missed / Wrong Review:** Automatically collects incorrect answers from Sequential Quiz and Mock Exams; includes `🔄 Retry Missed` (auto-removes questions once answered correctly) and batch clear with Undo.
 - **⭐ Saved Review:** Bookmark tricky questions (`☆ Save`) for targeted revision or self-quizzing.
