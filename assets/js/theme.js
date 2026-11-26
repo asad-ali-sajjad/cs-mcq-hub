@@ -1,29 +1,48 @@
 (function () {
-    const CFG = window.SITE_CONFIG || {};
-    const storage = CFG.storage || {};
-    const themeKey = storage.themeKey || "theme";
-    const themeBtn = document.getElementById("themeBtn");
+  const CFG = window.SITE_CONFIG || {};
+  const storage = CFG.storage || {};
+  const themeKey = storage.themeKey || "cs_mcq_hub_theme";
+  const themeBtn = document.getElementById("themeBtn");
 
-    function applyTheme(theme) {
-        if (theme === "dark") {
-            document.documentElement.setAttribute("data-theme", "dark");
-            if (themeBtn) themeBtn.textContent = "☀️ Light";
-        } else {
-            document.documentElement.removeAttribute("data-theme");
-            if (themeBtn) themeBtn.textContent = "🌙 Dark";
-        }
+  function readSavedTheme() {
+    try {
+      return localStorage.getItem(themeKey) || localStorage.getItem("theme") || "light";
+    } catch (err) {
+      return "light";
     }
+  }
 
-    // Initialize saved theme immediately
-    const savedTheme = localStorage.getItem(themeKey) || localStorage.getItem("theme") || "light";
-    applyTheme(savedTheme);
+  function saveTheme(theme) {
+    try {
+      localStorage.setItem(themeKey, theme);
+    } catch (err) {
+      // Ignore storage quota or private-mode errors
+    }
+  }
+
+  function applyTheme(theme) {
+    const isDark = theme === "dark";
+    if (isDark) {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+    }
 
     if (themeBtn) {
-        themeBtn.addEventListener("click", () => {
-            const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-            const nextTheme = isDark ? "light" : "dark";
-            localStorage.setItem(themeKey, nextTheme);
-            applyTheme(nextTheme);
-        });
+      themeBtn.textContent = isDark ? "☀️ Light" : "🌙 Dark";
+      themeBtn.setAttribute("aria-pressed", String(isDark));
+      themeBtn.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
     }
+  }
+
+  applyTheme(readSavedTheme());
+
+  if (themeBtn) {
+    themeBtn.addEventListener("click", () => {
+      const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+      const nextTheme = isDark ? "light" : "dark";
+      saveTheme(nextTheme);
+      applyTheme(nextTheme);
+    });
+  }
 })();

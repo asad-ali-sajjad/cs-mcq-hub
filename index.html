@@ -3,86 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title data-config-title-format="{brand.name}"></title>
+    <title data-config-title-format="{brand.name} — {brand.tagline}">CS MCQ Hub — Study Smarter. Revise Faster.</title>
+    <meta name="description" data-config-meta-description="brand.metaDescription" content="Interactive, offline-friendly MCQ practice, randomized mock exams, and active-recall review for Computer Science courses.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233b5bdb'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='28' fill='%23ffffff'%3ECS%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/home.css">
 </head>
-<body>
+<body id="top">
 
-    <div class="blob blob1"></div>
-    <div class="blob blob2"></div>
-    <div class="blob blob3"></div>
+    <div class="blob blob1" aria-hidden="true"></div>
+    <div class="blob blob2" aria-hidden="true"></div>
+    <div class="blob blob3" aria-hidden="true"></div>
 
     <header>
         <div class="nav">
-            <a href="index.html" class="logo" data-config-logo></a>
-            <button class="theme-btn" id="themeBtn">🌙 Dark</button>
+            <a href="index.html" class="logo" data-config-logo>CS<span>-MCQ-HUB</span></a>
+            <button type="button" class="theme-btn" id="themeBtn" aria-label="Switch to dark mode" aria-pressed="false">🌙 Dark</button>
         </div>
     </header>
 
-    <section class="hero">
-        <span class="tag" data-config-text="brand.heroTag">🚀 Interactive Exam Preparation Workspace</span>
-        <h1 data-config-html="brand.heroHeadline">Study Smarter.<br>Revise Faster.</h1>
-        <p data-config-text="brand.heroDescription">
-            A curated collection of interactive MCQ environments designed for Computer Science exam preparation. Open any subject and practice with searchable questions, quizzes, mock exams, saved reviews, and progress tracking.
-        </p>
+    <main>
+        <section class="hero">
+            <div class="hero-copy">
+                <span class="tag" data-config-text="brand.heroTag"></span>
+                <h1 data-config-html="brand.heroHeadline"></h1>
+                <p data-config-text="brand.heroDescription"></p>
+            </div>
 
-        <div class="hero-actions">
-            <a href="#subjects" class="btn btn-primary">Browse Subjects</a>
-            <a href="#" data-config-href="links.repoUrl" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-                GitHub Repository
-            </a>
-        </div>
-    </section>
+            <div class="hero-actions">
+                <a href="#subjects" class="btn btn-primary">Browse Subjects</a>
+                <a href="https://github.com/asad-ali-sajjad/cs-mcq-hub" data-config-href="links.repoUrl" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+                    GitHub Repository
+                </a>
+            </div>
+        </section>
 
-    <section class="stats">
-        <div class="stat-card">
-            <h2 id="activeSemStat">4 Subjects</h2>
-            <p data-config-text="catalog.activeTrackStatLabel">Active Study Track</p>
-        </div>
-        <div class="stat-card">
-            <h2 id="totalSubjectsStat">9</h2>
-            <p>Total Indexed Courses</p>
-        </div>
-        <div class="stat-card">
-            <h2>∞</h2>
-            <p>Practice Sessions</p>
-        </div>
-        <div class="stat-card">
-            <h2>24/7</h2>
-            <p>Offline Friendly</p>
-        </div>
-    </section>
+        <section class="continue-area" id="continueSection" hidden aria-label="Continue studying"></section>
 
-    <section class="controls-area">
-        <input
-            type="text"
-            class="search-box"
-            placeholder="🔍 Search subject or topic..."
-            id="searchInput"
-        >
+        <section class="stats" aria-label="Study statistics">
+            <div class="stat-card">
+                <h2 id="activeSemStat">4 Subjects</h2>
+                <p data-config-text="catalog.activeTrackStatLabel">Active Study Track</p>
+            </div>
+            <div class="stat-card">
+                <h2 id="totalSubjectsStat">9</h2>
+                <p>Total Indexed Courses</p>
+            </div>
+            <div class="stat-card">
+                <h2 id="attemptedStat">0</h2>
+                <p>Questions Attempted</p>
+            </div>
+            <div class="stat-card">
+                <h2 id="accuracyStat">—</h2>
+                <p>Overall Accuracy</p>
+            </div>
+        </section>
 
-        <div class="filter-tabs" id="filterTabs"></div>
-    </section>
+        <section class="controls-area" aria-label="Filter and search subjects">
+            <label for="searchInput" class="sr-only">Search subjects, courses, or topics</label>
+            <input
+                type="search"
+                class="search-box"
+                placeholder="🔍 Search subject, course code, or topic..."
+                id="searchInput"
+                autocomplete="off"
+            >
 
-    <section class="subjects" id="subjects">
-        <div class="section-header">
-            <h2 class="section-title">📚 Subjects</h2>
-        </div>
+            <div class="filter-row">
+                <div class="filter-tabs" id="filterTabs" role="group" aria-label="Filter by study track"></div>
+                <span class="search-scope-note" id="searchScopeNote" aria-live="polite"></span>
+            </div>
+        </section>
 
-        <div class="subject-grid" id="subjectGrid"></div>
-    </section>
+        <section class="subjects" id="subjects">
+            <div class="section-header">
+                <h2 class="section-title">📚 Subjects</h2>
+            </div>
+
+            <div class="subject-grid" id="subjectGrid"></div>
+        </section>
+    </main>
 
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-brand">
-                <a href="index.html" class="logo footer-logo" data-config-logo></a>
-                <p class="footer-desc" data-config-text="brand.footerTagline">
-                    Interactive MCQ practice, randomized mock exams, and active-recall review built for Computer Science courses.
-                </p>
+                <a href="index.html" class="logo footer-logo" data-config-logo>CS<span>-MCQ-HUB</span></a>
+                <p class="footer-desc" data-config-text="brand.footerTagline"></p>
                 <div class="footer-pills">
                     <span class="footer-pill">⚡ Zero-Backend</span>
-                    <span class="footer-pill">📴 Offline Ready</span>
+                    <span class="footer-pill">💾 Local Progress</span>
                     <span class="footer-pill">🌗 Light &amp; Dark UI</span>
                 </div>
             </div>
@@ -91,20 +100,20 @@
                 <div class="footer-col">
                     <h4>Workspace</h4>
                     <a href="#subjects">Browse Subjects</a>
-                    <a href="#" data-config-featured="0">Deep Learning Bank</a>
-                    <a href="#" data-config-featured="1">PDC Bank</a>
+                    <a href="quiz.html?subject=deep-learning" data-config-featured="0">Deep Learning Bank</a>
+                    <a href="quiz.html?subject=pdc" data-config-featured="1">PDC Bank</a>
                 </div>
                 <div class="footer-col">
                     <h4>Project</h4>
-                    <a href="#" data-config-href="links.repoUrl" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
-                    <a href="#" data-config-href="links.issuesUrl" target="_blank" rel="noopener noreferrer">Report an Issue</a>
-                    <a href="#top" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">Back to Top ↑</a>
+                    <a href="https://github.com/asad-ali-sajjad/cs-mcq-hub" data-config-href="links.repoUrl" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+                    <a href="https://github.com/asad-ali-sajjad/cs-mcq-hub/issues" data-config-href="links.issuesUrl" target="_blank" rel="noopener noreferrer">Report an Issue</a>
+                    <a href="#top">Back to Top ↑</a>
                 </div>
             </div>
         </div>
 
         <div class="footer-bottom">
-            <span><span data-config-text="brand.copyrightLine">Crafted for focused exam preparation</span> • <strong data-config-text="brand.name"></strong></span>
+            <span><span data-config-text="brand.copyrightLine"></span> • <strong data-config-text="brand.name"></strong></span>
             <span>Open-source static study workspace</span>
         </div>
     </footer>

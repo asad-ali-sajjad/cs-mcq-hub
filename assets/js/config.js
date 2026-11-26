@@ -1,11 +1,13 @@
 window.SITE_CONFIG = {
   brand: {
     name: "CS MCQ Hub",
+    tagline: "Study Smarter. Revise Faster.",
     logoPrefix: "CS",
     logoSuffix: "-MCQ-HUB",
+    metaDescription: "Interactive, offline-friendly MCQ practice, randomized mock exams, and active-recall review for Computer Science courses.",
     heroTag: "🚀 Interactive Exam Preparation Workspace",
     heroHeadline: "Study Smarter.<br>Revise Faster.",
-    heroDescription: "A curated collection of interactive MCQ environments designed for Computer Science exam preparation. Open any subject and practice with searchable questions, quizzes, mock exams, saved reviews, and progress tracking.",
+    heroDescription: "Practice searchable Computer Science MCQs, timed mock exams, and active-recall reviews with local progress tracking.",
     footerTagline: "Interactive MCQ practice, randomized mock exams, and active-recall review built for Computer Science courses.",
     quizFooterTagline: "Focused MCQ practice, mock exams, and active-recall revision.",
     copyrightLine: "Crafted for focused exam preparation"
@@ -23,10 +25,10 @@ window.SITE_CONFIG = {
     defaultTrack: "Active Track",
     activeTrackStatLabel: "Active Study Track",
     tracks: [
-      { id: "Active Track", label: "⚡ Active Track" },
-      { id: "Electives", label: "🚀 Electives" },
-      { id: "Core CS", label: "📚 Core CS" },
-      { id: "All", label: "All Subjects" }
+      { id: "Active Track", role: "active", label: "⚡ Active Track" },
+      { id: "Electives", role: "electives", label: "🚀 Electives" },
+      { id: "Core CS", role: "core", label: "📚 Core CS" },
+      { id: "All", role: "all", label: "All Subjects" }
     ],
     defaultStatusReady: "Exam Prep",
     defaultStatusUpcoming: "Coming Soon"
@@ -71,6 +73,11 @@ window.SITE_CONFIG = {
     document.querySelectorAll("[data-config-href]").forEach((el) => {
       const value = getValue(el.dataset.configHref);
       if (value != null) el.href = value;
+    });
+
+    document.querySelectorAll("[data-config-meta-description]").forEach((el) => {
+      const value = getValue(el.dataset.configMetaDescription);
+      if (value != null) el.setAttribute("content", value);
     });
 
     document.querySelectorAll("[data-config-logo]").forEach((el) => {
