@@ -1,53 +1,95 @@
-.status-wrapper {
-    max-width: 680px;
-    width: 100%;
-    margin: auto;
-    padding: 24px;
+/* ==========================================================================
+   CS MCQ Hub — Coming Soon / Direct Link Status Page
+   ========================================================================== */
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.status-card {
-    background: var(--card);
-    border-radius: 28px;
-    padding: 48px 36px;
-    box-shadow: var(--shadow);
-    text-align: center;
+.cs-main {
+  flex: 1;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 40px 24px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.status-icon {
-    font-size: 3.2rem;
-    margin-bottom: 18px;
+.cs-card {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 36px 32px;
+  box-shadow: var(--shadow);
+  text-align: center;
 }
 
-.status-card h1 {
-    font-size: clamp(1.8rem, 4vw, 2.6rem);
-    line-height: 1.2;
-    margin-bottom: 14px;
+.cs-top-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
 }
 
-.status-card p {
-    color: var(--muted);
-    font-size: 1.05rem;
-    line-height: 1.75;
-    margin-bottom: 32px;
+.cs-icon {
+  font-size: 2.1rem;
+  line-height: 1;
 }
 
-.actions {
-    display: flex;
-    gap: 14px;
-    justify-content: center;
-    flex-wrap: wrap;
+.cs-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.cs-badge.is-ready {
+  background: var(--accent-green-light);
+  color: var(--accent-green);
+}
+
+.cs-card h1 {
+  font-size: clamp(1.5rem, 3vw, 2.05rem);
+  line-height: 1.2;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.cs-desc {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.65;
+  max-width: 520px;
+  margin: 0 auto 28px;
+}
+
+.cs-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cs-actions .btn {
+  min-height: 44px;
 }
 
 @media (max-width: 600px) {
-    .status-card {
-        padding: 36px 22px;
-    }
+  .cs-card {
+    padding: 28px 20px;
+  }
 
-    .actions {
-        flex-direction: column;
-    }
-
-    .btn {
-        width: 100%;
-    }
+  .cs-actions .btn {
+    width: 100%;
+  }
 }

@@ -1,13 +1,14 @@
 /* ==========================================================================
-   CS MCQ Hub — Universal Quiz & Review Engine (Phase 2)
+   CS MCQ Hub — Universal Quiz & Review Engine
    Supports dynamic subject loading via ?subject=<id>, validated local upload,
-   sample template downloads, and interactive keyboard shortcuts modal.
+   sample template downloads, progress export/import, and keyboard shortcuts.
    ========================================================================== */
 
 const CFG = window.SITE_CONFIG || {};
 const quizDefaults = CFG.quizDefaults || {};
 const storageConfig = CFG.storage || {};
 const brandConfig = CFG.brand || {};
+const linksConfig = CFG.links || {};
 const fallbackSubjectId = quizDefaults.fallbackSubjectId || 'pdc';
 const fallbackCourseCode = quizDefaults.fallbackCourseCode || 'CS-HUB';
 const fallbackTitle = quizDefaults.fallbackTitle || 'CS MCQ Practice';
@@ -55,8 +56,9 @@ let undoBackup = null;
 let undoTimer = null;
 let activeSampleTab = 'json';
 let programmaticScrollUntil = 0;
+let lastFocusedBeforeModal = null;
 
-let state = { selected: {}, revealed: {}, missed: {}, bookmarked: {} };
+let state = { selected: {}, revealed: {}, missed: {}, bookmarked: {}, stats: null, updatedAt: 0 };
 
 let mockState = {
   active: false,
@@ -119,7 +121,7 @@ const SAMPLE_JSON_TEXT = `{
 
 const SAMPLE_JS_TEXT = `window.EXAM_DATA = {
   id: "cn-sample",
-  courseCode": "CS-305",
+  courseCode: "CS-305",
   title: "Computer Networks — Sample Bank",
   subtitle: "OSI Model, TCP/IP, Routing & Congestion Control",
   topics: [
@@ -260,9 +262,11 @@ function extractLoadedDataset(subjectId, registryEntry) {
 function normalizeMcqItem(item, index) {
   const opts = item.options || {};
   const rawExp = item.explanation ?? item.exp ?? item.feedback ?? '';
+  const parsedNum = item.num != null ? Number(item.num) : NaN;
+  const parsedWeek = item.week != null ? Number(item.week) : NaN;
   return {
-    num: item.num != null ? Number(item.num) : index + 1,
-    week: item.week != null ? Number(item.week) : null,
+    num: Number.isFinite(parsedNum) ? parsedNum : index + 1,
+    week: Number.isFinite(parsedWeek) ? parsedWeek : null,
     q: String(item.q || item.question || ''),
     A: String(item.A ?? opts.A ?? ''),
     B: String(item.B ?? opts.B ?? ''),
@@ -275,7 +279,6 @@ function normalizeMcqItem(item, index) {
   };
 }
 
-
 function inferDifficulty(item) {
   if (['easy', 'medium', 'hard'].includes(item.difficulty)) return item.difficulty;
 
@@ -283,7 +286,6 @@ function inferDifficulty(item) {
   const qLower = qRaw.toLowerCase();
   const fullText = `${item.q} ${item.A} ${item.B} ${item.C} ${item.D}`;
 
-  // 1. HARD: Calculations, dimensions, Big-O/formulas, units, or quantitative stems
   const hasMathOrUnits =
     /(\b\d+\.\d+\b|\b\d+e[+-]?\d+\b|\b\d+\s*[x×*]\s*\d+\b|\bO\([^)]+\)|\b\d+\s*(%|ms|s|kb|mb|gb|tb|bytes|bits|hz|khz|mhz|ghz|kbps|mbps|gbps)\b)/i.test(fullText);
 
@@ -294,7 +296,6 @@ function inferDifficulty(item) {
     return 'hard';
   }
 
-  // 2. EASY: Direct single-clause recall/definition stems without negations or numbers
   const hasNegation = /\b(NOT|EXCEPT|NEVER|FALSE)\b/.test(qRaw);
   const hasDigits = /\d/.test(qRaw);
   const isDirectRecallStem =
@@ -304,11 +305,11 @@ function inferDifficulty(item) {
     return 'easy';
   }
 
-  // 3. MEDIUM: Conceptual trade-offs, diagnostics, multi-clause scenarios & negation questions
   return 'medium';
 }
 
-function initializeDataset(dataset) {
+function initializeDataset(dataset, options) {
+  const opts = options || {};
   ACTIVE_SUBJECT_ID = dataset.id;
   EXAM_META = {
     id: dataset.id,
@@ -353,6 +354,9 @@ function initializeDataset(dataset) {
   }
 
   loadSubjectProgress();
+  if (!opts.skipPersist && MCQS_LIST.length > 0) {
+    saveState();
+  }
   applyHeaderAndTopicUI();
   render();
 }
@@ -375,9 +379,9 @@ function applyHeaderAndTopicUI() {
   const topicBar = document.getElementById('topic-filter-bar');
   if (TOPICS_CONFIG.length > 0) {
     topicBar.style.display = 'flex';
-    let chipsHtml = `<button class="topic-chip active" data-topic="all" onclick="setTopic('all')">All Topics (${total})</button>`;
+    let chipsHtml = `<button type="button" class="topic-chip active" data-topic="all" onclick="setTopic('all')">All Topics (${total})</button>`;
     for (const t of TOPICS_CONFIG) {
-      chipsHtml += `<button class="topic-chip" data-topic="${escapeHtml(t.id)}" onclick="setTopic('${escapeHtml(t.id)}')">${escapeHtml(t.label)}</button>`;
+      chipsHtml += `<button type="button" class="topic-chip" data-topic="${escapeHtml(t.id)}" onclick="setTopic('${escapeHtml(t.id)}')">${escapeHtml(t.label)}</button>`;
     }
     topicBar.innerHTML = chipsHtml;
   } else {
@@ -390,22 +394,39 @@ function applyHeaderAndTopicUI() {
    3. Modals: Upload Format Guide + Interactive Keyboard Shortcuts
    -------------------------------------------------------------------------- */
 function openUploadModal() {
-  closeModals();
+  lastFocusedBeforeModal = document.activeElement;
+  closeModals(true);
   closeMobileSidebar();
   switchSampleTab(activeSampleTab);
   const fb = document.getElementById('upload-feedback');
   if (fb) { fb.style.display = 'none'; fb.textContent = ''; }
-  document.getElementById('upload-modal').classList.add('open');
+  const modal = document.getElementById('upload-modal');
+  modal.removeAttribute('inert');
+  modal.classList.add('open');
+  const closeBtn = modal.querySelector('.modal-close-btn');
+  if (closeBtn) closeBtn.focus();
 }
 
 function openKbdModal() {
-  closeModals();
+  lastFocusedBeforeModal = document.activeElement;
+  closeModals(true);
   closeMobileSidebar();
-  document.getElementById('kbd-modal').classList.add('open');
+  const modal = document.getElementById('kbd-modal');
+  modal.removeAttribute('inert');
+  modal.classList.add('open');
+  const closeBtn = modal.querySelector('.modal-close-btn');
+  if (closeBtn) closeBtn.focus();
 }
 
-function closeModals() {
-  document.querySelectorAll('.hub-modal-backdrop').forEach(el => el.classList.remove('open'));
+function closeModals(skipFocusRestore) {
+  document.querySelectorAll('.hub-modal-backdrop').forEach(el => {
+    el.classList.remove('open');
+    el.setAttribute('inert', '');
+  });
+  if (!skipFocusRestore && lastFocusedBeforeModal && typeof lastFocusedBeforeModal.focus === 'function') {
+    lastFocusedBeforeModal.focus();
+    lastFocusedBeforeModal = null;
+  }
 }
 
 function switchSampleTab(type) {
@@ -417,11 +438,12 @@ function switchSampleTab(type) {
 
 function copySampleCode() {
   const text = activeSampleTab === 'json' ? SAMPLE_JSON_TEXT : SAMPLE_JS_TEXT;
+  if (!navigator.clipboard) return;
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById('copy-sample-btn');
     btn.textContent = '✅ Copied';
     setTimeout(() => { btn.textContent = '📋 Copy'; }, 1600);
-  });
+  }).catch(() => {});
 }
 
 function downloadSampleFile(type) {
@@ -525,7 +547,7 @@ function processUploadedFile(file) {
         };
       }
 
-      initializeDataset(datasetObj);
+      initializeDataset(datasetObj, { skipPersist: true });
       currentMode = 'study';
       currentTopic = 'all';
       currentDifficulty = 'all';
@@ -570,6 +592,7 @@ function demoShortcutAction(action) {
   if (action === 'search') {
     if (window.innerWidth <= 920) document.body.classList.add('mobile-sidebar-open');
     else document.body.classList.remove('sidebar-collapsed');
+    syncSidebarAccessibility();
     const sb = document.getElementById('search-box');
     if (sb) sb.focus();
     return;
@@ -591,61 +614,190 @@ function demoShortcutAction(action) {
   } else if (action === 'option') {
     if (currentMode === 'study') setMode('practice');
     const updatedCards = document.querySelectorAll('#mcq-list .mcq-card');
-    const opt = updatedCards[activeCardIndex] && updatedCards[activeCardIndex].querySelector('.mcq-option');
+    const opt = updatedCards[activeCardIndex] && updatedCards[activeCardIndex].querySelector('.mcq-option:not(:disabled)');
     if (opt) opt.click();
   }
 }
 
 /* --------------------------------------------------------------------------
-   4. Per-Subject LocalStorage Persistence
+   4. Per-Subject LocalStorage Persistence, Migration & Export/Import
    -------------------------------------------------------------------------- */
 function getStorageKey() {
-  return `${storageConfig.prefix || 'cs_mcq_hub_'}${ACTIVE_SUBJECT_ID}_${storageConfig.version || 'v1'}`;
+  const prefix = storageConfig.prefix || 'cs_mcq_hub_';
+  const version = storageConfig.version || 'v1';
+  return `${prefix}${ACTIVE_SUBJECT_ID}_${version}`;
+}
+
+function getLegacyStorageKey() {
+  const prefix = storageConfig.prefix || 'cs_mcq_hub_';
+  return `${prefix}${ACTIVE_SUBJECT_ID}`;
+}
+
+function computeCurrentStats() {
+  const total = MCQS_LIST.length;
+  let correct = 0;
+  let wrong = 0;
+  for (const item of MCQS_LIST) {
+    const picked = state.selected[item.num];
+    if (picked) {
+      if (picked === item.ans) correct++;
+      else wrong++;
+    }
+  }
+  const answered = correct + wrong;
+  const accuracy = answered > 0 ? Math.round((correct / answered) * 100) : null;
+  return { total, answered, correct, wrong, accuracy };
+}
+
+function normalizeProgressObject(rawObj) {
+  const safe = { selected: {}, revealed: {}, missed: {}, bookmarked: {}, stats: null, updatedAt: 0 };
+  if (!rawObj || typeof rawObj !== 'object') return safe;
+  if (rawObj.selected && typeof rawObj.selected === 'object' && !Array.isArray(rawObj.selected)) {
+    safe.selected = Object.assign({}, rawObj.selected);
+  }
+  if (rawObj.revealed && typeof rawObj.revealed === 'object' && !Array.isArray(rawObj.revealed)) {
+    safe.revealed = Object.assign({}, rawObj.revealed);
+  }
+  if (rawObj.missed && typeof rawObj.missed === 'object' && !Array.isArray(rawObj.missed)) {
+    safe.missed = Object.assign({}, rawObj.missed);
+  }
+  if (rawObj.bookmarked && typeof rawObj.bookmarked === 'object' && !Array.isArray(rawObj.bookmarked)) {
+    safe.bookmarked = Object.assign({}, rawObj.bookmarked);
+  }
+  if (rawObj.stats && typeof rawObj.stats === 'object' && !Array.isArray(rawObj.stats)) {
+    safe.stats = Object.assign({}, rawObj.stats);
+  }
+  if (typeof rawObj.updatedAt === 'number' && Number.isFinite(rawObj.updatedAt)) {
+    safe.updatedAt = rawObj.updatedAt;
+  }
+  return safe;
 }
 
 function loadSubjectProgress() {
-  state = { selected: {}, revealed: {}, missed: {}, bookmarked: {} };
+  state = normalizeProgressObject(null);
   try {
-    const saved = JSON.parse(localStorage.getItem(getStorageKey()));
-    if (saved && typeof saved === 'object') {
-      state.selected = saved.selected || {};
-      state.revealed = saved.revealed || {};
-      state.missed = saved.missed || {};
-      state.bookmarked = saved.bookmarked || {};
+    const currentKey = getStorageKey();
+    let raw = localStorage.getItem(currentKey);
+    if (!raw) {
+      const legacyRaw = localStorage.getItem(getLegacyStorageKey());
+      if (legacyRaw) {
+        raw = legacyRaw;
+        localStorage.setItem(currentKey, legacyRaw);
+      }
+    }
+    if (raw) {
+      state = normalizeProgressObject(JSON.parse(raw));
     }
   } catch (e) {}
 }
 
 function saveState() {
+  state.stats = computeCurrentStats();
+  state.updatedAt = Date.now();
   try {
     localStorage.setItem(getStorageKey(), JSON.stringify(state));
   } catch (e) {}
 }
 
+function exportProgress() {
+  const payload = {
+    app: brandConfig.name || 'CS MCQ Hub',
+    version: 1,
+    subjectId: ACTIVE_SUBJECT_ID,
+    subjectTitle: EXAM_META.title,
+    exportedAt: new Date().toISOString(),
+    state: Object.assign(normalizeProgressObject(state), { stats: computeCurrentStats() })
+  };
+  const dateStamp = new Date().toISOString().slice(0, 10);
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `cs-mcq-hub-${ACTIVE_SUBJECT_ID}-${dateStamp}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  showUndoToast(`Exported progress for ${EXAM_META.title}.`, null, null);
+}
+
+function importProgressFile(event) {
+  const file = event.target.files && event.target.files[0];
+  event.target.value = '';
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    try {
+      const parsed = JSON.parse(String(e.target.result || ''));
+      const incomingRaw = parsed && parsed.state && typeof parsed.state === 'object' ? parsed.state : parsed;
+      if (!incomingRaw || typeof incomingRaw !== 'object' || (!incomingRaw.selected && !incomingRaw.missed && !incomingRaw.bookmarked)) {
+        showUndoToast('Invalid progress backup file.', null, null);
+        return;
+      }
+
+      const snapshot = normalizeProgressObject(state);
+      state = normalizeProgressObject(incomingRaw);
+      saveState();
+      render();
+
+      const importedCount = Object.keys(state.selected).length;
+      const subjectNote = parsed.subjectId && parsed.subjectId !== ACTIVE_SUBJECT_ID
+        ? ` (from ${parsed.subjectId})`
+        : '';
+      showUndoToast(`Imported progress${subjectNote}: ${importedCount} answered.`, 'full', snapshot);
+    } catch (err) {
+      showUndoToast(`Could not read backup file: ${err.message}`, null, null);
+    }
+  };
+  reader.readAsText(file);
+}
+
 /* --------------------------------------------------------------------------
    5. Sidebar, Toast & Helpers
    -------------------------------------------------------------------------- */
+function syncSidebarAccessibility() {
+  const sidebar = document.getElementById('app-sidebar');
+  if (!sidebar) return;
+  const isMobile = window.innerWidth <= 920;
+  const isHidden = isMobile
+    ? !document.body.classList.contains('mobile-sidebar-open')
+    : document.body.classList.contains('sidebar-collapsed');
+
+  if (isHidden) {
+    sidebar.setAttribute('inert', '');
+    sidebar.setAttribute('aria-hidden', 'true');
+  } else {
+    sidebar.removeAttribute('inert');
+    sidebar.removeAttribute('aria-hidden');
+  }
+}
+
 function toggleSidebar() {
   if (window.innerWidth <= 920) {
     document.body.classList.toggle('mobile-sidebar-open');
   } else {
     document.body.classList.toggle('sidebar-collapsed');
   }
+  syncSidebarAccessibility();
 }
 
 function closeMobileSidebar() {
   document.body.classList.remove('mobile-sidebar-open');
+  syncSidebarAccessibility();
 }
+
+window.addEventListener('resize', syncSidebarAccessibility, { passive: true });
 
 function showUndoToast(message, type, snapshot) {
   if (undoTimer) clearTimeout(undoTimer);
-  undoBackup = { type, snapshot };
+  undoBackup = type && snapshot ? { type, snapshot } : null;
   const area = document.getElementById('undo-toast-area');
   area.style.display = 'block';
   area.innerHTML = `
     <div class="undo-toast">
       <span>${escapeHtml(message)}</span>
-      <button class="undo-btn" onclick="triggerUndo()">↺ Undo</button>
+      ${undoBackup ? '<button type="button" class="undo-btn" onclick="triggerUndo()">↺ Undo</button>' : ''}
     </div>
   `;
   undoTimer = setTimeout(() => {
@@ -663,6 +815,8 @@ function triggerUndo() {
   } else if (undoBackup.type === 'progress') {
     state.selected = undoBackup.snapshot.selected || {};
     state.revealed = undoBackup.snapshot.revealed || {};
+  } else if (undoBackup.type === 'full') {
+    state = normalizeProgressObject(undoBackup.snapshot);
   }
   saveState();
   undoBackup = null;
@@ -678,6 +832,31 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+function buildReportIssueUrl(item) {
+  const baseUrl = (linksConfig.issuesUrl || 'https://github.com/asad-ali-sajjad/cs-mcq-hub/issues').replace(/\/+$/, '');
+  const title = `[Question Issue] ${EXAM_META.title} — Q#${item.num}`;
+  const body = [
+    `**Subject:** ${EXAM_META.title} (\`${ACTIVE_SUBJECT_ID}\`)`,
+    `**Question #:** ${item.num}`,
+    '',
+    `**Question:**`,
+    item.q,
+    '',
+    `**Options:**`,
+    `- A: ${item.A}`,
+    `- B: ${item.B}`,
+    `- C: ${item.C}`,
+    `- D: ${item.D}`,
+    '',
+    `**Current Answer Key:** ${item.ans}`,
+    '',
+    `**What needs fixing?**`,
+    '<!-- Describe the typo, wrong answer key, or unclear explanation -->'
+  ].join('\n');
+
+  return `${baseUrl}/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
 }
 
 function shuffleArray(arr) {
@@ -700,7 +879,7 @@ function getDisplayedOptions(item) {
     ['D', 'C', 'B', 'A'],
     ['A', 'D', 'B', 'C']
   ];
-  const order = perms[item.num % perms.length];
+  const order = perms[Math.abs(item.num) % perms.length];
   return order.map((origLetter, idx) => ({
     displayLetter: base[idx],
     origLetter,
@@ -712,6 +891,7 @@ function toggleShuffleOptions() {
   shuffleOptionsEnabled = !shuffleOptionsEnabled;
   const btn = document.getElementById('shuffle-opt-btn');
   btn.classList.toggle('active-on', shuffleOptionsEnabled);
+  btn.setAttribute('aria-pressed', String(shuffleOptionsEnabled));
   btn.textContent = shuffleOptionsEnabled ? '🔀 Shuffled' : '🔀 Shuffle';
   render();
 }
@@ -741,7 +921,11 @@ function setMode(mode) {
 
   ['study', 'practice', 'mock', 'missed', 'bookmarked'].forEach(m => {
     const el = document.getElementById(`mode-${m}`);
-    if (el) el.classList.toggle('active', m === mode);
+    if (el) {
+      const isActive = m === mode;
+      el.classList.toggle('active', isActive);
+      el.setAttribute('aria-pressed', String(isActive));
+    }
   });
 
   const isMock = mode === 'mock';
@@ -765,7 +949,9 @@ function setTopic(topic) {
   currentPage = 1;
   activeCardIndex = 0;
   document.querySelectorAll('#topic-filter-bar .topic-chip').forEach(chip => {
-    chip.classList.toggle('active', chip.dataset.topic === topic);
+    const isActive = chip.dataset.topic === topic;
+    chip.classList.toggle('active', isActive);
+    chip.setAttribute('aria-pressed', String(isActive));
   });
   if (currentMode === 'mock') { setMode('study'); return; }
   render();
@@ -777,7 +963,11 @@ function setDifficulty(diff) {
   activeCardIndex = 0;
   ['all', 'easy', 'medium', 'hard'].forEach(d => {
     const el = document.getElementById(`diff-${d}`);
-    if (el) el.classList.toggle('active', d === diff);
+    if (el) {
+      const isActive = d === diff;
+      el.classList.toggle('active', isActive);
+      el.setAttribute('aria-pressed', String(isActive));
+    }
   });
   closeMobileSidebar();
   render();
@@ -822,11 +1012,17 @@ function clearAllFilters() {
   currentPage = 1;
   document.getElementById('search-box').value = '';
   document.querySelectorAll('#topic-filter-bar .topic-chip').forEach(chip => {
-    chip.classList.toggle('active', chip.dataset.topic === 'all');
+    const isAll = chip.dataset.topic === 'all';
+    chip.classList.toggle('active', isAll);
+    chip.setAttribute('aria-pressed', String(isAll));
   });
   ['all', 'easy', 'medium', 'hard'].forEach(d => {
     const el = document.getElementById(`diff-${d}`);
-    if (el) el.classList.toggle('active', d === 'all');
+    if (el) {
+      const isAll = d === 'all';
+      el.classList.toggle('active', isAll);
+      el.setAttribute('aria-pressed', String(isAll));
+    }
   });
   render();
 }
@@ -996,17 +1192,7 @@ function resetProgress() {
    8. Stats, Card Rendering & Mock Exam
    -------------------------------------------------------------------------- */
 function updateStats(filteredCount, startIdx, endIdx) {
-  const total = MCQS_LIST.length;
-  let correct = 0;
-  let wrong = 0;
-  for (const item of MCQS_LIST) {
-    const picked = state.selected[item.num];
-    if (picked) {
-      if (picked === item.ans) correct++;
-      else wrong++;
-    }
-  }
-  const answered = correct + wrong;
+  const { total, answered, correct, wrong, accuracy } = computeCurrentStats();
   const savedCount = Object.keys(state.bookmarked).length;
   const missedCount = Object.keys(state.missed).length;
   const pct = total > 0 ? Math.round((answered / total) * 100) : 0;
@@ -1040,7 +1226,7 @@ function updateStats(filteredCount, startIdx, endIdx) {
   document.getElementById('clear-filters-btn').style.display = hasFilters ? 'inline-block' : 'none';
 
   document.getElementById('sb-answered-label').textContent = `Completed: ${answered} / ${total}`;
-  document.getElementById('sb-acc-label').textContent = answered > 0 ? `${Math.round((correct / answered) * 100)}%` : '0%';
+  document.getElementById('sb-acc-label').textContent = accuracy != null ? `${accuracy}%` : '0%';
   document.getElementById('sb-progress-fill').style.width = `${pct}%`;
   document.getElementById('sb-ok-text').textContent = `✅ ${correct} Correct`;
   document.getElementById('sb-bad-text').textContent = `❌ ${wrong} Wrong`;
@@ -1067,6 +1253,7 @@ function renderCardTopRow(item, indexLabel, extraDoneBtnHtml) {
   const topicText = TOPIC_FULL[t]
     ? `<span class="desktop-only">${escapeHtml(TOPIC_FULL[t])} • </span><span class="mobile-only">${escapeHtml(TOPIC_SHORT[t])} • </span>`
     : '';
+  const reportUrl = buildReportIssueUrl(item);
 
   return `
     <div class="mcq-top-row">
@@ -1081,7 +1268,10 @@ function renderCardTopRow(item, indexLabel, extraDoneBtnHtml) {
       </div>
       <div class="card-right-btns">
         ${extraDoneBtnHtml}
-        <button class="bookmark-btn ${isSaved ? 'saved' : ''}" onclick="event.stopPropagation(); toggleBookmark(${item.num})">
+        <a class="report-link-btn" href="${reportUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="Report an error in this question" aria-label="Report an error in question ${item.num}">
+          ⚑ <span class="desktop-only">Report</span>
+        </a>
+        <button type="button" class="bookmark-btn ${isSaved ? 'saved' : ''}" aria-pressed="${isSaved}" onclick="event.stopPropagation(); toggleBookmark(${item.num})">
           ${isSaved ? '★ Saved' : '☆ Save'}
         </button>
       </div>
@@ -1173,7 +1363,7 @@ function renderMockView() {
             </select>
           </div>
         </div>
-        <button class="primary-btn" onclick="startMockExam()">Start Mock Exam</button>
+        <button type="button" class="primary-btn" onclick="startMockExam()">Start Mock Exam</button>
       </div>
     `;
     return;
@@ -1208,9 +1398,9 @@ function renderMockView() {
         ` : ''}
       </div>
       <div style="display:flex; flex-wrap:wrap; gap:7px;">
-        ${!mockState.submitted ? `<button class="primary-btn" style="padding:7px 14px; font-size:0.82rem;" onclick="submitMockExam()">Submit &amp; Grade</button>` : ''}
-        <button class="action-btn" onclick="startMockExam()">New Set</button>
-        <button class="action-btn" onclick="exitMockExam()">Settings</button>
+        ${!mockState.submitted ? `<button type="button" class="primary-btn" style="padding:7px 14px; font-size:0.82rem;" onclick="submitMockExam()">Submit &amp; Grade</button>` : ''}
+        <button type="button" class="action-btn" onclick="startMockExam()">New Set</button>
+        <button type="button" class="action-btn" onclick="exitMockExam()">Settings</button>
       </div>
     </div>
   `;
@@ -1228,8 +1418,8 @@ function renderMockView() {
           </div>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          ${wrongCount > 0 ? `<button class="action-btn danger" onclick="setMode('missed')">Review Missed (${Object.keys(state.missed).length})</button>` : ''}
-          <button class="primary-btn" onclick="startMockExam()">Try Another Set</button>
+          ${wrongCount > 0 ? `<button type="button" class="action-btn danger" onclick="setMode('missed')">Review Missed (${Object.keys(state.missed).length})</button>` : ''}
+          <button type="button" class="primary-btn" onclick="startMockExam()">Try Another Set</button>
         </div>
       </div>
     `;
@@ -1253,19 +1443,29 @@ function renderMockView() {
       if (isLocked) cls += ' locked';
 
       if (showResult) {
-        if (L === item.ans) { cls += ' correct'; badge = '<span>✅</span>'; }
-        else if (picked === L && L !== item.ans) { cls += ' wrong'; badge = '<span>❌</span>'; }
-        else { cls += ' locked-dim'; }
+        if (L === item.ans) {
+          cls += ' correct';
+          badge = '<span class="opt-status-icon" aria-label="Correct">✅</span>';
+        } else if (picked === L && L !== item.ans) {
+          cls += ' wrong';
+          badge = '<span class="opt-status-icon" aria-label="Incorrect">❌</span>';
+        } else {
+          cls += ' locked-dim';
+        }
       } else if (picked) {
-        if (picked === L) { cls += ' selected-pending'; badge = '<span>●</span>'; }
-        else { cls += ' locked-dim'; }
+        if (picked === L) {
+          cls += ' selected-pending';
+          badge = '<span class="opt-status-icon" aria-label="Selected">●</span>';
+        } else {
+          cls += ' locked-dim';
+        }
       }
 
       optionsHtml += `
-        <div class="${cls}" onclick="selectOption(${item.num}, '${L}')">
+        <button type="button" class="${cls}" ${isLocked ? 'disabled' : ''} onclick="selectOption(${item.num}, '${L}')">
           <span>${L}. ${escapeHtml(item[L])}</span>
           ${badge}
-        </div>
+        </button>
       `;
     }
 
@@ -1336,10 +1536,10 @@ function render() {
             : 'Review your mistakes, mark mastered items done, or retry them.'}</p>
         </div>
         <div class="review-actions">
-          <button class="primary-btn" style="padding:7px 14px; font-size:0.82rem;" onclick="toggleMissedRetry()">
+          <button type="button" class="primary-btn" style="padding:7px 14px; font-size:0.82rem;" onclick="toggleMissedRetry()">
             ${missedRetryMode ? '📖 Back to Review' : '🔄 Retry Missed'}
           </button>
-          <button class="action-btn danger" onclick="clearAllMissed()">🧹 Clear All</button>
+          <button type="button" class="action-btn danger" onclick="clearAllMissed()">🧹 Clear All</button>
         </div>
       </div>
     ` : '';
@@ -1354,10 +1554,10 @@ function render() {
             : 'Review your bookmarked questions, practice them, or clear the list.'}</p>
         </div>
         <div class="review-actions">
-          <button class="primary-btn" style="padding:7px 14px; font-size:0.82rem;" onclick="toggleSavedPractice()">
+          <button type="button" class="primary-btn" style="padding:7px 14px; font-size:0.82rem;" onclick="toggleSavedPractice()">
             ${savedPracticeMode ? '📖 Study Saved' : '✍️ Practice Saved'}
           </button>
-          <button class="action-btn danger" onclick="clearAllSaved()">🧹 Clear All</button>
+          <button type="button" class="action-btn danger" onclick="clearAllSaved()">🧹 Clear All</button>
         </div>
       </div>
     ` : '';
@@ -1413,23 +1613,31 @@ function render() {
       isRevealed = isLocked;
     }
 
+    const disableOptionBtn = currentMode === 'study' || isLocked;
+
     let optionsHtml = '';
     for (const opt of opts) {
       let cls = 'mcq-option';
       let badge = '';
-      if (isLocked) cls += ' locked';
+      if (disableOptionBtn) cls += ' locked';
 
       if (isRevealed) {
-        if (opt.origLetter === item.ans) { cls += ' correct'; badge = '<span>✅</span>'; }
-        else if (picked === opt.origLetter && opt.origLetter !== item.ans) { cls += ' wrong'; badge = '<span>❌</span>'; }
-        else if (isLocked) { cls += ' locked-dim'; }
+        if (opt.origLetter === item.ans) {
+          cls += ' correct';
+          badge = '<span class="opt-status-icon" aria-label="Correct">✅</span>';
+        } else if (picked === opt.origLetter && opt.origLetter !== item.ans) {
+          cls += ' wrong';
+          badge = '<span class="opt-status-icon" aria-label="Incorrect">❌</span>';
+        } else if (isLocked) {
+          cls += ' locked-dim';
+        }
       }
 
       optionsHtml += `
-        <div class="${cls}" onclick="selectOption(${item.num}, '${opt.origLetter}')">
+        <button type="button" class="${cls}" ${disableOptionBtn ? 'disabled' : ''} onclick="selectOption(${item.num}, '${opt.origLetter}')">
           <span>${opt.displayLetter}. ${escapeHtml(opt.text)}</span>
           ${badge}
-        </div>
+        </button>
       `;
     }
 
@@ -1448,7 +1656,7 @@ function render() {
       footerBanner = `
         <div class="mcq-answer-banner">
           <div style="flex:1; min-width:220px;">Your choice: <strong>${wrongLabel}</strong> • ${ansLabel}${keyTakeaway}</div>
-          <button class="done-pill-btn" onclick="clearMissedSingle(${item.num})">✓ Done</button>
+          <button type="button" class="done-pill-btn" onclick="clearMissedSingle(${item.num})">✅ Done</button>
         </div>
       `;
     } else if (currentMode === 'missed' && missedRetryMode) {
@@ -1456,7 +1664,7 @@ function render() {
         <div class="mcq-answer-banner">
           <div style="width:100%;">
             ${isRevealed
-              ? `${picked === item.ans ? '🎉 Correct — removed from Missed' : 'Still incorrect'} • ${ansLabel}${keyTakeaway}`
+              ? `${picked === item.ans ? '✅ Correct — removed from Missed' : '❌ Still incorrect'} • ${ansLabel}${keyTakeaway}`
               : 'Select an option above to test yourself'}
           </div>
         </div>
@@ -1465,30 +1673,30 @@ function render() {
       footerBanner = `
         <div class="mcq-answer-banner">
           <div style="flex:1; min-width:220px;">${ansLabel}${keyTakeaway}</div>
-          <button class="done-pill-btn" onclick="clearSavedSingle(${item.num})">✓ Done</button>
+          <button type="button" class="done-pill-btn" onclick="clearSavedSingle(${item.num})">✅ Done</button>
         </div>
       `;
     } else if (currentMode === 'bookmarked' && savedPracticeMode) {
       footerBanner = `
         <div class="mcq-answer-banner">
           <div style="flex:1; min-width:220px;">${isRevealed ? `${ansLabel}${keyTakeaway}` : 'Select an option above to test yourself'}</div>
-          ${isRevealed ? `<button class="done-pill-btn" onclick="clearSavedSingle(${item.num})">✓ Done</button>` : ''}
+          ${isRevealed ? `<button type="button" class="done-pill-btn" onclick="clearSavedSingle(${item.num})">✅ Done</button>` : ''}
         </div>
       `;
     } else {
       footerBanner = `
         <div class="mcq-answer-banner">
           <div style="flex:1; min-width:220px;">${isRevealed ? `${ansLabel}${keyTakeaway}` : 'Select an option above'}</div>
-          ${!isLocked ? `<button class="reveal-single-btn" onclick="toggleRevealSingle(${item.num})">Show Answer</button>` : ''}
+          ${!isLocked ? `<button type="button" class="reveal-single-btn" onclick="toggleRevealSingle(${item.num})">Show Answer</button>` : ''}
         </div>
       `;
     }
 
     let extraDoneBtn = '';
     if (currentMode === 'missed') {
-      extraDoneBtn = `<button class="done-pill-btn" onclick="event.stopPropagation(); clearMissedSingle(${item.num})">✓ Done</button>`;
+      extraDoneBtn = `<button type="button" class="done-pill-btn" onclick="event.stopPropagation(); clearMissedSingle(${item.num})">✅ Done</button>`;
     } else if (currentMode === 'bookmarked') {
-      extraDoneBtn = `<button class="done-pill-btn" onclick="event.stopPropagation(); clearSavedSingle(${item.num})">✓ Done</button>`;
+      extraDoneBtn = `<button type="button" class="done-pill-btn" onclick="event.stopPropagation(); clearSavedSingle(${item.num})">✅ Done</button>`;
     }
 
     html += `
@@ -1504,9 +1712,9 @@ function render() {
   if (totalPages > 1) {
     html += `
       <div class="pagination-bar">
-        <button class="page-btn" onclick="jumpToBatch(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Previous</button>
+        <button type="button" class="page-btn" onclick="jumpToBatch(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Previous</button>
         <span style="font-size:0.86rem; font-weight:700; color:var(--muted);">Page ${currentPage} of ${totalPages}</span>
-        <button class="page-btn" onclick="jumpToBatch(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next →</button>
+        <button type="button" class="page-btn" onclick="jumpToBatch(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next →</button>
       </div>
     `;
   }
@@ -1543,7 +1751,6 @@ function goToNextQuestion() {
     return;
   }
 
-  // At the end of current page: advance to next batch if available
   if (currentMode !== 'mock') {
     const filtered = getFilteredList();
     const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
@@ -1560,7 +1767,6 @@ function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Keep activeCardIndex synced gently when scrolling manually on mobile/desktop
 let scrollSyncTimer = null;
 window.addEventListener('scroll', () => {
   if (Date.now() < programmaticScrollUntil) return;
@@ -1625,6 +1831,7 @@ document.addEventListener('keydown', (e) => {
     e.preventDefault();
     if (window.innerWidth <= 920) document.body.classList.add('mobile-sidebar-open');
     else document.body.classList.remove('sidebar-collapsed');
+    syncSidebarAccessibility();
     const sb = document.getElementById('search-box');
     if (sb) sb.focus();
     return;
@@ -1646,7 +1853,7 @@ document.addEventListener('keydown', (e) => {
     const activeCard = cards[activeCardIndex];
     if (!activeCard) return;
     const map = { '1': 0, 'a': 0, 'A': 0, '2': 1, 'b': 1, 'B': 1, '3': 2, 'c': 2, 'C': 2, '4': 3, 'd': 3, 'D': 3 };
-    const optEls = activeCard.querySelectorAll('.mcq-option');
+    const optEls = activeCard.querySelectorAll('.mcq-option:not(:disabled)');
     if (optEls[map[e.key]]) optEls[map[e.key]].click();
   } else if (e.key === 's' || e.key === 'S') {
     const activeCard = cards[activeCardIndex];
@@ -1659,6 +1866,7 @@ document.addEventListener('keydown', (e) => {
 
 (async function bootstrapQuizEngine() {
   configureQuizControls();
+  syncSidebarAccessibility();
   switchSampleTab('json');
 
   const subjectId = getRequestedSubjectId();

@@ -1,35 +1,76 @@
+/* ==========================================================================
+   CS MCQ Hub — Coming Soon & Legacy Link Resolver
+   ========================================================================== */
+
 (function () {
-    const CFG = window.SITE_CONFIG || {};
-    const brand = CFG.brand || {};
-    const links = CFG.links || {};
-    const params = new URLSearchParams(window.location.search);
-    const subject = params.get("subject");
-    const semester = params.get("sem");
+  const CFG = window.SITE_CONFIG || {};
+  const brand = CFG.brand || {};
+  const links = CFG.links || {};
+  const catalog = Array.isArray(window.SUBJECTS_DATA) ? window.SUBJECTS_DATA : [];
 
-    const titleEl = document.getElementById("moduleTitle");
-    const descEl = document.getElementById("moduleDesc");
-    const tagEl = document.getElementById("moduleTag");
-    const isLocal = window.location.protocol === "file:" ||
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1";
-    const homeUrl = isLocal ? "index.html" : (links.liveUrl || "index.html");
+  const params = new URLSearchParams(window.location.search);
+  const rawId = (params.get("subject") || params.get("id") || params.get("exam") || "").trim();
 
-    document.querySelectorAll("[data-config-href='links.repoUrl']").forEach((el) => {
-        if (links.repoUrl) el.href = links.repoUrl;
-    });
-    document.querySelectorAll("[data-config-home-link]").forEach((el) => {
-        el.href = homeUrl;
-    });
+  const iconEl = document.getElementById("cs-icon");
+  const badgeEl = document.getElementById("cs-badge");
+  const titleEl = document.getElementById("cs-title");
+  const descEl = document.getElementById("cs-desc");
+  const actionsEl = document.getElementById("cs-actions");
 
-    if (semester && tagEl) {
-        tagEl.textContent = `🚧 ${semester} • Under Construction`;
+  function escapeHtml(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  const subject = rawId
+    ? catalog.find((s) => s && String(s.id || "").toLowerCase() === rawId.toLowerCase())
+    : null;
+
+  if (!subject) {
+    return;
+  }
+
+  const trackLabel = subject.track || subject.semester || "Curriculum";
+  document.title = `${subject.title} — ${brand.name || "CS MCQ Hub"}`;
+
+  if (iconEl) iconEl.textContent = subject.icon || "📘";
+  if (titleEl) titleEl.textContent = subject.title;
+
+  if (subject.ready) {
+    if (badgeEl) {
+      badgeEl.textContent = `${trackLabel} • Ready`;
+      badgeEl.classList.add("is-ready");
     }
-
-    if (subject) {
-        if (titleEl) titleEl.textContent = subject;
-        if (descEl) {
-            descEl.textContent = `We're currently preparing the interactive MCQ bank, practice quizzes, and mock exams for ${subject}. This module will be live soon!`;
-        }
-        document.title = `${subject} (Coming Soon) • ${brand.name || "CS MCQ Hub"}`;
+    if (descEl) {
+      descEl.textContent = `${subject.title} is now live and ready for practice! Jump straight into the question bank below.`;
     }
+    if (actionsEl) {
+      actionsEl.innerHTML = `
+        <a href="quiz.html?subject=${encodeURIComponent(subject.id)}" class="btn btn-primary">Start Practice Now →</a>
+        <a href="index.html" class="btn btn-secondary">← All Subjects</a>
+      `;
+    }
+    return;
+  }
+
+  if (badgeEl) {
+    badgeEl.textContent = `${trackLabel} • ${subject.status || "Coming Soon"}`;
+  }
+  if (descEl) {
+    const details = subject.description ? ` (${subject.description})` : "";
+    descEl.textContent = `The MCQ bank for ${subject.title}${details} is currently in preparation. Check back soon or explore available subjects in the meantime.`;
+  }
+  if (actionsEl) {
+    const contribBtn = links.issuesUrl
+      ? `<a href="${escapeHtml(links.issuesUrl)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Contribute MCQs ↗</a>`
+      : "";
+    actionsEl.innerHTML = `
+      <a href="index.html" class="btn btn-primary">← Browse Available Subjects</a>
+      ${contribBtn}
+    `;
+  }
 })();

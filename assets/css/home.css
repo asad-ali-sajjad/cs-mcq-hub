@@ -286,6 +286,34 @@
   flex: 1;
 }
 
+.card-progress {
+  margin-top: 16px;
+}
+
+.card-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.card-progress-track {
+  height: 6px;
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.card-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--accent-green));
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+
 .card-btn {
   display: flex;
   align-items: center;

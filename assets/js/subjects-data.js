@@ -29,7 +29,7 @@
       status: READY_STATUS,
       icon: "⚙️",
       description: "Deterministic & Non-Deterministic Finite Automata, Regular Expressions, Context-Free Grammars, Pushdown Automata, and Turing Machines.",
-      ready: true,
+      ready: false,
       questionCount: null,
       dataFile: "data/sem-7/automata.js"
     },
@@ -68,7 +68,7 @@
       status: READY_STATUS,
       icon: "☁️",
       description: "Virtualization, Service Models (IaaS, PaaS, SaaS), Cloud Architecture, Containers, Orchestration, and Distributed Storage.",
-      ready: true,
+      ready: false,
       questionCount: null,
       dataFile: "data/sem-7/cloud-computing.js"
     },

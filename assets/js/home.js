@@ -60,30 +60,40 @@
     return `${storagePrefix}${subjectId}_${storageVersion}`;
   }
 
-  function readSubjectProgress(subjectId) {
+  function getSubjectTotalCount(sub, parsedStats) {
+    if (parsedStats && typeof parsedStats.total === "number" && parsedStats.total > 0) {
+      return parsedStats.total;
+    }
+    if (sub && typeof sub.questionCount === "number" && sub.questionCount > 0) {
+      return sub.questionCount;
+    }
+    return null;
+  }
+
+  function readSubjectProgress(sub) {
+    if (!sub || !sub.id) return null;
     try {
-      const raw = localStorage.getItem(getSubjectStorageKey(subjectId));
+      const raw = localStorage.getItem(getSubjectStorageKey(sub.id));
       if (!raw) return null;
       const parsed = JSON.parse(raw);
       if (!parsed || typeof parsed !== "object") return null;
 
-      const selected = parsed.selected && typeof parsed.selected === "object" ? parsed.selected : {};
-      const missed = parsed.missed && typeof parsed.missed === "object" ? parsed.missed : {};
-      const selectedKeys = Object.keys(selected);
-      const attempted = selectedKeys.length;
-      let wrongCount = 0;
-
-      selectedKeys.forEach((num) => {
-        if (Object.prototype.hasOwnProperty.call(missed, num)) {
-          wrongCount += 1;
-        }
-      });
-
-      const correct = Math.max(0, attempted - wrongCount);
-      const accuracy = attempted > 0 ? Math.round((correct / attempted) * 100) : null;
       const updatedAt = typeof parsed.updatedAt === "number" ? parsed.updatedAt : 0;
+      const stats = parsed.stats && typeof parsed.stats === "object" ? parsed.stats : null;
+      const total = getSubjectTotalCount(sub, stats);
 
-      return { attempted, correct, wrongCount, accuracy, updatedAt };
+      if (stats && typeof stats.answered === "number") {
+        const attempted = Math.max(0, stats.answered);
+        const correct = typeof stats.correct === "number" ? Math.max(0, stats.correct) : 0;
+        const wrong = typeof stats.wrong === "number" ? Math.max(0, stats.wrong) : 0;
+        const accuracy = attempted > 0 && typeof stats.accuracy === "number" ? stats.accuracy : null;
+        return { attempted, correct, wrong, total, accuracy, exact: true, updatedAt };
+      }
+
+      // Legacy fallback before subject is re-opened under updated quiz-engine.js
+      const selected = parsed.selected && typeof parsed.selected === "object" ? parsed.selected : {};
+      const attempted = Object.keys(selected).length;
+      return { attempted, correct: 0, wrong: 0, total, accuracy: null, exact: false, updatedAt };
     } catch (err) {
       return null;
     }
@@ -91,20 +101,25 @@
 
   function collectAllProgress() {
     let totalAttempted = 0;
-    let totalCorrect = 0;
+    let totalExactAttempted = 0;
+    let totalExactCorrect = 0;
     let latestSubject = null;
     let latestProgress = null;
 
     catalog.forEach((sub) => {
       if (!sub || !sub.ready) return;
-      const progress = readSubjectProgress(sub.id);
-      if (!progress || progress.attempted === 0) return;
+      const progress = readSubjectProgress(sub);
+      if (!progress) return;
 
       totalAttempted += progress.attempted;
-      totalCorrect += progress.correct;
+      if (progress.exact && progress.attempted > 0) {
+        totalExactAttempted += progress.attempted;
+        totalExactCorrect += progress.correct;
+      }
 
-      const isComplete = typeof sub.questionCount === "number" && sub.questionCount > 0 && progress.attempted >= sub.questionCount;
-      if (!isComplete) {
+      const isComplete = progress.total != null && progress.attempted >= progress.total;
+      const hasActivity = progress.updatedAt > 0 || progress.attempted > 0;
+      if (hasActivity && !isComplete) {
         if (!latestProgress || progress.updatedAt > latestProgress.updatedAt) {
           latestSubject = sub;
           latestProgress = progress;
@@ -112,11 +127,11 @@
       }
     });
 
-    const overallAccuracy = totalAttempted > 0
-      ? Math.round((totalCorrect / totalAttempted) * 100)
+    const overallAccuracy = totalExactAttempted > 0
+      ? Math.round((totalExactCorrect / totalExactAttempted) * 100)
       : null;
 
-    return { totalAttempted, totalCorrect, overallAccuracy, latestSubject, latestProgress };
+    return { totalAttempted, overallAccuracy, latestSubject, latestProgress };
   }
 
   function updateHeroStats(summary) {
@@ -145,10 +160,20 @@
       return;
     }
 
-    const countText = typeof latestSubject.questionCount === "number" && latestSubject.questionCount > 0
-      ? `${latestProgress.attempted} of ${latestSubject.questionCount} answered`
-      : `${latestProgress.attempted} answered`;
-    const accText = latestProgress.accuracy != null ? ` • ${latestProgress.accuracy}% accuracy` : "";
+    let subline = "";
+    if (latestProgress.attempted > 0) {
+      const countPart = latestProgress.total != null
+        ? `${latestProgress.attempted} of ${latestProgress.total} answered`
+        : `${latestProgress.attempted} answered`;
+      const accPart = latestProgress.accuracy != null
+        ? ` • ${latestProgress.correct} correct (${latestProgress.accuracy}%)`
+        : "";
+      subline = countPart + accPart;
+    } else if (latestProgress.total != null) {
+      subline = `Last opened • ${latestProgress.total} questions available`;
+    } else {
+      subline = "Last opened • Ready to practice";
+    }
 
     continueSection.hidden = false;
     continueSection.innerHTML = `
@@ -158,7 +183,7 @@
           <div>
             <div class="continue-eyebrow">Continue where you left off</div>
             <div class="continue-title">${escapeHtml(latestSubject.title)}</div>
-            <div class="continue-sub">${escapeHtml(countText + accText)}</div>
+            <div class="continue-sub">${escapeHtml(subline)}</div>
           </div>
         </div>
         <a href="quiz.html?subject=${encodeURIComponent(latestSubject.id)}" class="btn btn-primary">
@@ -168,25 +193,53 @@
     `;
   }
 
-  function formatCardBadge(sub, track) {
+  function formatCardBadge(sub, track, progress) {
     if (!sub.ready) {
       return escapeHtml(track);
     }
 
-    const progress = readSubjectProgress(sub.id);
-    const hasCount = typeof sub.questionCount === "number" && sub.questionCount > 0;
-
+    const total = progress ? progress.total : getSubjectTotalCount(sub, null);
     if (progress && progress.attempted > 0) {
-      const progressPart = hasCount ? `${progress.attempted}/${sub.questionCount}` : `${progress.attempted} done`;
-      const accPart = progress.accuracy != null ? ` • ${progress.accuracy}%` : "";
-      return escapeHtml(`${progressPart}${accPart}`);
+      if (total != null) {
+        return escapeHtml(`${progress.attempted} / ${total} Qs`);
+      }
+      return escapeHtml(`${progress.attempted} Practiced`);
     }
 
-    if (hasCount) {
-      return escapeHtml(`${sub.questionCount} Qs • ${sub.status || readyStatus}`);
+    if (total != null) {
+      return escapeHtml(`${total} Qs`);
     }
 
     return escapeHtml(sub.status || readyStatus);
+  }
+
+  function renderCardProgress(progress) {
+    if (!progress || progress.attempted <= 0) return "";
+
+    if (progress.total != null && progress.total > 0) {
+      const pct = Math.min(100, Math.round((progress.attempted / progress.total) * 100));
+      const accText = progress.accuracy != null ? `${progress.accuracy}% accuracy` : `${pct}% complete`;
+      return `
+        <div class="card-progress">
+          <div class="card-progress-meta">
+            <span>${pct}% complete</span>
+            <span>${escapeHtml(accText)}</span>
+          </div>
+          <div class="card-progress-track" aria-hidden="true">
+            <div class="card-progress-fill" style="width: ${pct}%"></div>
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="card-progress">
+        <div class="card-progress-meta">
+          <span>${progress.attempted} answered</span>
+          <span>${progress.accuracy != null ? `${progress.accuracy}% accuracy` : "In progress"}</span>
+        </div>
+      </div>
+    `;
   }
 
   function renderSubjects() {
@@ -224,7 +277,8 @@
 
     gridEl.innerHTML = filtered.map((sub) => {
       const track = normalizeTrack(sub);
-      const badgeText = formatCardBadge(sub, track);
+      const progress = sub.ready ? readSubjectProgress(sub) : null;
+      const badgeText = formatCardBadge(sub, track, progress);
 
       if (!sub.ready) {
         return `
@@ -241,6 +295,7 @@
       }
 
       const targetUrl = `quiz.html?subject=${encodeURIComponent(sub.id)}`;
+      const ctaLabel = progress && progress.attempted > 0 ? "Continue Practice →" : "Start Practice →";
       return `
         <article class="subject-card">
           <div class="card-top">
@@ -249,10 +304,18 @@
           </div>
           <h3>${escapeHtml(sub.title)}</h3>
           <p>${escapeHtml(sub.description || "")}</p>
-          <a href="${targetUrl}" class="card-btn">Start Practice →</a>
+          ${renderCardProgress(progress)}
+          <a href="${targetUrl}" class="card-btn">${ctaLabel}</a>
         </article>
       `;
     }).join("");
+  }
+
+  function refreshCatalogView() {
+    const progressSummary = collectAllProgress();
+    updateHeroStats(progressSummary);
+    renderContinueBanner(progressSummary);
+    renderSubjects();
   }
 
   if (filterTabs) {
@@ -288,8 +351,12 @@
     });
   }
 
-  const progressSummary = collectAllProgress();
-  updateHeroStats(progressSummary);
-  renderContinueBanner(progressSummary);
-  renderSubjects();
+  window.addEventListener("pageshow", refreshCatalogView);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      refreshCatalogView();
+    }
+  });
+
+  refreshCatalogView();
 })();

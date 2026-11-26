@@ -1,82 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title data-config-title-format="Module Coming Soon • {brand.name}"></title>
-    <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="assets/css/coming-soon.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-config-title-format="Subject Status — {brand.name}">Subject Status</title>
+  <meta name="description" data-config-meta-description="brand.metaDescription" content="Subject availability and upcoming MCQ bank status.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233b5bdb'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='28' fill='%23ffffff'%3ECS%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/css/global.css">
+  <link rel="stylesheet" href="assets/css/coming-soon.css">
 </head>
 <body>
 
-    <div class="blob blob1"></div>
-    <div class="blob blob2"></div>
-    <div class="blob blob3"></div>
+  <!-- Ambient Background Blobs -->
+  <div class="blob blob1" aria-hidden="true"></div>
+  <div class="blob blob2" aria-hidden="true"></div>
+  <div class="blob blob3" aria-hidden="true"></div>
 
-    <header>
-        <div class="nav">
-            <a href="index.html" class="logo" data-config-logo data-config-home-link></a>
-            <button class="theme-btn" id="themeBtn">🌙 Dark</button>
-        </div>
-    </header>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="logo" data-config-logo></a>
+      <button type="button" class="theme-btn" id="themeBtn" aria-label="Switch to dark mode" aria-pressed="false">🌙 Dark</button>
+    </div>
+  </header>
 
-    <main class="status-wrapper">
-        <div class="status-card">
-            <div class="status-icon">🛠️</div>
-            <span class="tag" id="moduleTag">🚧 Under Construction</span>
-            <h1 id="moduleTitle">Subject Module Coming Soon</h1>
-            <p id="moduleDesc">
-                We're currently curating and organizing interactive MCQs, mock quizzes, and revision notes for this module. Check back soon or follow the repository for updates!
-            </p>
+  <!-- Main Status Card -->
+  <main class="cs-main">
+    <section class="cs-card" aria-labelledby="cs-title">
+      <div class="cs-top-meta">
+        <span class="cs-icon" id="cs-icon" aria-hidden="true">🚧</span>
+        <span class="cs-badge" id="cs-badge">In Preparation</span>
+      </div>
 
-            <div class="actions">
-                <a href="index.html" data-config-home-link class="btn btn-primary">← Back to Subjects</a>
-                <a href="#" data-config-href="links.repoUrl" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-                    View GitHub Repo
-                </a>
-            </div>
-        </div>
-    </main>
+      <h1 id="cs-title">Subject Bank Coming Soon</h1>
+      <p class="cs-desc" id="cs-desc">
+        This question bank is currently being compiled and verified. Browse our available subjects to start practicing right away.
+      </p>
 
-    <footer class="site-footer">
-        <div class="footer-inner">
-            <div class="footer-brand">
-                <a href="index.html" class="logo footer-logo" data-config-logo data-config-home-link></a>
-                <p class="footer-desc" data-config-text="brand.footerTagline">
-                    Interactive MCQ practice, randomized mock exams, and active-recall review built for Computer Science courses.
-                </p>
-                <div class="footer-pills">
-                    <span class="footer-pill">⚡ Zero-Backend</span>
-                    <span class="footer-pill">📴 Offline Ready</span>
-                    <span class="footer-pill">🌗 Light &amp; Dark UI</span>
-                </div>
-            </div>
+      <div class="cs-actions" id="cs-actions">
+        <a href="index.html" class="btn btn-primary">← Browse All Subjects</a>
+      </div>
+    </section>
+  </main>
 
-            <div class="footer-links-group">
-                <div class="footer-col">
-                    <h4>Workspace</h4>
-                    <a href="#subjects">Browse Subjects</a>
-                    <a href="#" data-config-featured="0">Deep Learning Bank</a>
-                    <a href="#" data-config-featured="1">PDC Bank</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Project</h4>
-                    <a href="#" data-config-href="links.repoUrl" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
-                    <a href="#" data-config-href="links.issuesUrl" target="_blank" rel="noopener noreferrer">Report an Issue</a>
-                    <a href="#top" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">Back to Top ↑</a>
-                </div>
-            </div>
-        </div>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <span><span data-config-text="brand.copyrightLine">Crafted for focused exam preparation</span> • <strong data-config-text="brand.name"></strong></span>
+      <span>Open-source static study workspace</span>
+    </div>
+  </footer>
 
-        <div class="footer-bottom">
-            <span><span data-config-text="brand.copyrightLine">Crafted for focused exam preparation</span> • <strong data-config-text="brand.name"></strong></span>
-            <span>Open-source static study workspace</span>
-        </div>
-    </footer>
-
-
-    <script src="assets/js/config.js"></script>
-    <script src="assets/js/theme.js"></script>
-    <script src="assets/js/coming-soon.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/theme.js"></script>
+  <script src="assets/js/subjects-data.js"></script>
+  <script src="assets/js/coming-soon.js"></script>
 </body>
 </html>
