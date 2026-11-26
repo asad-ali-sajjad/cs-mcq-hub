@@ -279,33 +279,103 @@ function normalizeMcqItem(item, index) {
   };
 }
 
-function inferDifficulty(item) {
-  if (['easy', 'medium', 'hard'].includes(item.difficulty)) return item.difficulty;
-
+function computeDifficultyScore(item) {
   const qRaw = item.q.trim();
   const qLower = qRaw.toLowerCase();
-  const fullText = `${item.q} ${item.A} ${item.B} ${item.C} ${item.D}`;
+  const options = [item.A, item.B, item.C, item.D];
+  const avgOptLen = options.reduce((sum, opt) => sum + opt.length, 0) / 4;
 
-  const hasMathOrUnits =
-    /(\b\d+\.\d+\b|\b\d+e[+-]?\d+\b|\b\d+\s*[x×*]\s*\d+\b|\bO\([^)]+\)|\b\d+\s*(%|ms|s|kb|mb|gb|tb|bytes|bits|hz|khz|mhz|ghz|kbps|mbps|gbps)\b)/i.test(fullText);
+  let score = 0;
 
-  const hasQuantitativeStem =
-    /\b(how many|how much|calculate|compute|derive|to (two|three|four) decimal places|by what factor|by roughly what factor|what is the (value|output|shape|size|complexity|speedup|efficiency|throughput|latency|probability|loss|gradient|accuracy|precision|recall|f1|variance|standard deviation|learning rate|saving))\b/i.test(qLower);
-
-  if (hasMathOrUnits || hasQuantitativeStem) {
-    return 'hard';
+  // 1. Quantitative / calculation / problem-solving cues (Strong Hard signals)
+  if (/\b(calculate|compute|derive|evaluate|solve|estimate|how many|how much|what is the (value|number|total|minimum|maximum|average|expected|resulting|final|effective|net|overall|exact)|by what factor|by how much|to (two|three|four) decimal places|what will be the output|trace)\b/i.test(qLower)) {
+    score += 4.5;
   }
 
-  const hasNegation = /\b(NOT|EXCEPT|NEVER|FALSE)\b/.test(qRaw);
-  const hasDigits = /\d/.test(qRaw);
-  const isDirectRecallStem =
-    /^(what is (a |an |the )?(main |primary |core |basic |key )?(purpose|role|definition|goal|function|advantage|meaning)|what does|what do|which (protocol|layer|algorithm|data structure|component|method|function|statement|term|type|mode|split|pair)|define|in [a-z\s-]+, what is)\b/i.test(qRaw);
-
-  if (!hasNegation && !hasDigits && (isDirectRecallStem || qRaw.length <= 92)) {
-    return 'easy';
+  if (/\b(suppose|assume|consider a|given a|if a system|if a network|if a model|if there are|for a system with|with \d+)\b/i.test(qLower)) {
+    score += 3.0;
   }
 
-  return 'medium';
+  if (/\b(\d+\.\d+|\d+e[+-]?\d+|\d+\s*[x×*]\s*\d+|O\([^)]+\)|\d+\s*(%|ms|us|ns|s|sec|min|kb|mb|gb|tb|bytes|bits|hz|khz|mhz|ghz|kbps|mbps|gbps|cores|threads|nodes|layers|epochs))\b/i.test(qRaw)) {
+    score += 3.0;
+  }
+
+  const numericOptionsCount = options.filter(opt => /(\b\d+(\.\d+)?\b|O\([^)]+\)|\d+\s*%)/.test(opt)).length;
+  if (numericOptionsCount >= 3) {
+    score += 3.5;
+  } else if (numericOptionsCount >= 1) {
+    score += 1.0;
+  }
+
+  // 2. Analytical / negation / multi-condition cues (Medium-to-Hard signals)
+  if (/\b(NOT|EXCEPT|NEVER|FALSE|INCORRECT|LEAST)\b/.test(qRaw) || /\b(cannot|does not|do not|is not|are not|neither|nor)\b/i.test(qLower)) {
+    score += 2.5;
+  }
+
+  if (/\b(why does|why is|why would|what happens (if|when)|how does .* differ|difference between|compared to|in contrast to|unlike|whereas|trade-?off|advantage of .* over|limitation of|bottleneck|overhead|failure|degrade)\b/i.test(qLower)) {
+    score += 2.0;
+  }
+
+  if (/\b(when|while|although|though|however|unless|provided that|whenever|during)\b/i.test(qLower)) {
+    score += 1.2;
+  }
+
+  // 3. Direct recall / definition cues (Easy signals)
+  if (/^(what is|what are|what does|what do|define|which term|which concept|which protocol|which layer|which algorithm|which technique|which component|which function|which method|which type|which mode|which of the following (is|are|best defines|refers to|represents|describes))\b/i.test(qLower)) {
+    score -= 2.2;
+  }
+
+  if (/\b(stands for|refers to|is defined as|is known as|is called|primary purpose|main purpose|main goal|main function|basic unit|full form)\b/i.test(qLower)) {
+    score -= 2.2;
+  }
+
+  // 4. Continuous structural length & multi-sentence gradient
+  const stemLenScore = Math.max(-1.5, Math.min(4.0, (qRaw.length - 85) / 35));
+  const optLenScore = Math.max(-1.0, Math.min(3.0, (avgOptLen - 35) / 25));
+  score += stemLenScore + optLenScore;
+
+  if (/[.?]\s+[A-Z]/.test(qRaw)) {
+    score += 1.8;
+  }
+
+  return Number(score.toFixed(3));
+}
+
+function classifyBankDifficulties(items) {
+  const result = {};
+  const untagged = [];
+
+  for (const item of items) {
+    if (['easy', 'medium', 'hard'].includes(item.difficulty)) {
+      result[item.num] = item.difficulty;
+    } else {
+      untagged.push({ num: item.num, score: computeDifficultyScore(item) });
+    }
+  }
+
+  if (untagged.length === 0) return result;
+
+  if (untagged.length < 6) {
+    for (const u of untagged) {
+      result[u.num] = u.score <= 0.5 ? 'easy' : (u.score >= 4.2 ? 'hard' : 'medium');
+    }
+    return result;
+  }
+
+  const sorted = untagged.slice().sort((a, b) => (a.score - b.score) || (a.num - b.num));
+  const easyCutoffRaw = sorted[Math.floor(sorted.length * 0.30)].score;
+  const hardCutoffRaw = sorted[Math.floor(sorted.length * 0.75)].score;
+
+  const easyThreshold = Math.max(-1.0, Math.min(2.2, easyCutoffRaw));
+  const hardThreshold = Math.max(easyThreshold + 1.4, Math.min(6.5, hardCutoffRaw));
+
+  for (const u of untagged) {
+    if (u.score <= easyThreshold) result[u.num] = 'easy';
+    else if (u.score >= hardThreshold) result[u.num] = 'hard';
+    else result[u.num] = 'medium';
+  }
+
+  return result;
 }
 
 function initializeDataset(dataset, options) {
@@ -337,6 +407,8 @@ function initializeDataset(dataset, options) {
   DIFF_COUNTS.medium = 0;
   DIFF_COUNTS.hard = 0;
 
+  const classifiedDifficulties = classifyBankDifficulties(MCQS_LIST);
+
   for (const item of MCQS_LIST) {
     if (item.topic && TOPIC_FULL[item.topic]) {
       TOPIC_MAP[item.num] = item.topic;
@@ -348,7 +420,7 @@ function initializeDataset(dataset, options) {
       TOPIC_MAP[item.num] = 'general';
     }
 
-    const d = inferDifficulty(item);
+    const d = classifiedDifficulties[item.num] || 'medium';
     DIFFICULTY_MAP[item.num] = d;
     DIFF_COUNTS[d]++;
   }
