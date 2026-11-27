@@ -2,270 +2,433 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title data-config-title-format="{brand.name} — {brand.tagline}">ReviseLoop — Practise. Review. Retry.</title>
-  <meta name="description" data-config-meta-description="brand.metaDescription" content="An offline-capable MCQ practice and exam revision workspace with mock exams, mistake review and progress tracking.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-config-title-format="{brand.name} — {brand.tagline}">ReviseLoop — Close the gap between studying and knowing.</title>
+  <meta name="description" data-config-meta-description="brand.metaDescription" content="An offline-capable MCQ practice and exam revision workspace with mock exams, mistake review, and progress tracking.">
   <meta name="theme-color" content="#3b5bdb">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="ReviseLoop — Practise. Review. Retry.">
-  <meta property="og:description" content="An offline-capable MCQ practice and exam revision workspace with mock exams, mistake review and progress tracking.">
-  <meta property="og:url" content="https://asad-ali-sajjad.github.io/reviseloop/">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233b5bdb'/%3E%3Cpath d='M46 32a14 14 0 1 1-5-10.7' fill='none' stroke='%23fff' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M43 12v12H31' fill='none' stroke='%23fff' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233b5bdb'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='30' fill='%23fff'%3ERL%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/global.css">
   <link rel="stylesheet" href="assets/css/home.css">
 </head>
-<body id="top">
-  <a class="skip-link" href="#subjects">Skip to subjects</a>
+<body>
 
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Ambient Background Blobs -->
   <div class="blob blob1" aria-hidden="true"></div>
   <div class="blob blob2" aria-hidden="true"></div>
   <div class="blob blob3" aria-hidden="true"></div>
 
-  <header>
-    <div class="nav">
-      <a href="index.html" class="logo" data-config-logo>Revise<span>Loop</span></a>
-      <nav class="nav-links" aria-label="Main">
+  <!-- Top Navigation -->
+  <header class="navbar" id="top">
+    <div class="nav-inner">
+      <a href="index.html" class="logo">Revise<span>Loop</span></a>
+      <nav class="nav-links" aria-label="Primary Navigation">
         <a href="#subjects">Subjects</a>
         <a href="#features">Features</a>
         <a href="#faq">FAQ</a>
-        <button type="button" data-modal="about">About</button>
+        <button type="button" class="nav-link-btn" data-open-dialog="dialog-about">About</button>
+        <button type="button" class="theme-btn" id="themeBtn" aria-label="Switch to dark mode" aria-pressed="false">🌙 Dark</button>
       </nav>
-      <button type="button" class="theme-btn" id="themeBtn" aria-label="Switch to dark mode" aria-pressed="false">🌙 Dark</button>
     </div>
   </header>
 
-  <main id="main">
-    <section class="hero">
+  <main class="container" id="main-content">
+
+    <!-- Split Hero + Interactive 3-Question Mini-Sampler -->
+    <section class="hero" aria-labelledby="hero-heading">
       <div class="hero-copy">
-        <span class="tag" data-config-text="brand.heroTag">🎓 Computer Science Exam Prep</span>
-        <h1 data-config-html="brand.heroHeadline"><span>Practise.</span> <span>Review.</span> <span>Retry.</span></h1>
-        <p class="lead" data-config-text="brand.heroDescription">Turn every wrong answer into your next study step. Practise MCQs, take mock exams and revisit the questions you missed.</p>
+        <span class="tag">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          Computer Science Exam Prep
+        </span>
+        <h1 class="hero-title" id="hero-heading">
+          Practise.<br>
+          Review.<br>
+          <span class="hero-accent">Retry.</span>
+        </h1>
+        <p class="hero-desc">
+          Turn every wrong answer into your next study step. Practise MCQs, take timed mock exams, and master the questions you missed.
+        </p>
+
         <div class="hero-actions">
           <a href="#subjects" class="btn btn-primary">Start Practising →</a>
-          <button type="button" class="btn btn-secondary" data-modal="how">How It Works</button>
+          <a href="#features" class="btn btn-secondary">How It Works</a>
         </div>
-        <ul class="hero-checks">
-          <li>No account needed</li>
-          <li>Mock exams</li>
-          <li>Mistake review</li>
+
+        <ul class="hero-trust-list" aria-label="Key highlights">
+          <li><span class="trust-check" aria-hidden="true">✓</span> No account needed</li>
+          <li><span class="trust-check" aria-hidden="true">✓</span> Mock exams</li>
+          <li><span class="trust-check" aria-hidden="true">✓</span> Mistake review</li>
         </ul>
       </div>
 
-        <div class="demo-card" aria-label="Interactive sample question">
-        <span class="demo-eyebrow">Try a question</span>
-        <h2>What is the worst-case time complexity of binary search on a sorted array?</h2>
-        <div id="demoOptions">
-          <button type="button" class="demo-option">A. O(1)</button>
-          <button type="button" class="demo-option" data-correct>B. O(log n)</button>
-          <button type="button" class="demo-option">C. O(n)</button>
-          <button type="button" class="demo-option">D. O(n log n)</button>
+      <!-- Interactive Hero Sampler Card -->
+      <aside class="demo-card" id="demo-card" tabindex="0" aria-label="Interactive sample question. Press keys A through D or 1 through 4 to answer.">
+        <div class="demo-progress-bar" aria-hidden="true">
+          <div class="demo-progress-fill" id="demo-progress-fill" style="width: 33.33%;"></div>
         </div>
-        <p class="demo-feedback" id="demoFeedback" aria-live="polite">Choose an answer.</p>
-        <button type="button" class="theme-btn" id="demoRetry" hidden>↻ Retry</button>
-      </div>
+
+        <div class="demo-card-top">
+          <div class="demo-eyebrow-group">
+            <span class="demo-eyebrow">TRY A QUESTION</span>
+            <span class="demo-topic-pill" id="demo-topic">OS &amp; Concurrency</span>
+          </div>
+          <div class="demo-meta-pills">
+            <span class="demo-score-pill" id="demo-score" hidden>0 / 3</span>
+            <span class="demo-counter" id="demo-counter">1 / 3</span>
+          </div>
+        </div>
+
+        <p class="demo-question" id="demo-question">
+          Which Coffman condition for deadlock is broken when a process must request all required resources before execution begins?
+        </p>
+
+        <div class="demo-options" id="demo-options" role="group" aria-label="Sample answer choices">
+          <button type="button" class="demo-opt" data-opt="A"><span>A. Mutual Exclusion</span></button>
+          <button type="button" class="demo-opt" data-opt="B"><span>B. Hold and Wait</span></button>
+          <button type="button" class="demo-opt" data-opt="C"><span>C. No Preemption</span></button>
+          <button type="button" class="demo-opt" data-opt="D"><span>D. Circular Wait</span></button>
+        </div>
+
+        <div class="demo-footer">
+          <div class="demo-feedback" id="demo-feedback" aria-live="polite">
+            Choose an option above (or press A–D) to test instant feedback.
+          </div>
+          <div class="demo-controls">
+            <div class="demo-dots" id="demo-dots" aria-label="Sample question selector"></div>
+            <div class="demo-btn-group">
+              <button type="button" class="demo-retry-btn" id="demo-retry-btn" hidden>Retry ↺</button>
+              <button type="button" class="demo-next-btn" id="demo-next-btn">Next sample →</button>
+            </div>
+          </div>
+        </div>
+      </aside>
     </section>
 
-    <section class="continue-area" id="continueSection" hidden aria-label="Continue studying"></section>
+    <!-- Live Resume Banner (populated dynamically by home.js when in-progress subject exists) -->
+    <section id="continueSection" class="continue-section" hidden aria-label="Continue studying"></section>
 
-    <section class="stats" aria-label="Study statistics">
-      <div class="stat-card">
-        <h2 id="activeSemStat">—</h2>
-        <p data-config-text="catalog.activeTrackStatLabel">Active Study Track</p>
-      </div>
-      <div class="stat-card">
-        <h2 id="totalSubjectsStat">—</h2>
-        <p>Total Indexed Courses</p>
-      </div>
-      <div class="stat-card">
-        <h2 id="attemptedStat">0</h2>
-        <p>Questions Attempted</p>
-      </div>
-      <div class="stat-card">
-        <h2 id="accuracyStat">—</h2>
-        <p>Overall Accuracy</p>
-      </div>
-    </section>
+    <!-- Subject Catalog Section -->
+    <section id="subjects" class="catalog-section" aria-labelledby="catalog-heading">
+      <div class="section-header-row">
+        <div>
+          <h2 class="section-title" id="catalog-heading">Subject Question Banks</h2>
+          <p class="section-sub">Pick a course to open Study Bank, Sequential Quiz, or Mock Exam mode.</p>
+        </div>
 
-    <section class="controls-area" aria-label="Filter and search subjects">
-      <label for="searchInput" class="sr-only">Search subjects, courses, or topics</label>
-      <input
-        type="search"
-        class="search-box"
-        placeholder="🔍 Search subject, course code, or topic..."
-        id="searchInput"
-        autocomplete="off"
-      >
-      <div class="filter-row">
-        <div class="filter-tabs" id="filterTabs" role="group" aria-label="Filter by study track"></div>
-        <span class="search-scope-note" id="searchScopeNote" aria-live="polite"></span>
+        <!-- Live Progress Telemetry Strip -->
+        <div class="hero-stats" aria-label="Overall progress summary">
+          <div class="stat-pill">
+            <span class="stat-value" id="activeSemStat">0 Subjects</span>
+            <span class="stat-label">Active Track</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-value" id="totalSubjectsStat">0</span>
+            <span class="stat-label">Total Courses</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-value" id="attemptedStat">0</span>
+            <span class="stat-label" id="attemptedLabel">Attempted</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-value" id="accuracyStat">—</span>
+            <span class="stat-label" id="accuracyLabel">Accuracy</span>
+          </div>
+        </div>
       </div>
-    </section>
 
-    <section class="subjects" id="subjects" tabindex="-1">
-      <div class="section-header">
-        <h2 class="section-title">📚 Subjects</h2>
+      <!-- Search & Track Filter Toolbar -->
+      <div class="controls-bar">
+        <div class="filter-tabs" id="filterTabs" role="group" aria-label="Filter subjects by curriculum track"></div>
+        <div class="search-wrap">
+          <div class="search-input-box">
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <label for="searchInput" class="sr-only">Search subjects by name, topic, or course code</label>
+            <input type="search" id="searchInput" class="search-input" placeholder="Search subjects, topics, or codes..." autocomplete="off">
+            <button type="button" class="search-clear-btn" id="searchClearBtn" hidden aria-label="Clear search">✕</button>
+            <kbd class="search-kbd" id="searchKbd" aria-hidden="true">/</kbd>
+          </div>
+          <span class="search-scope-note" id="searchScopeNote" aria-live="polite"></span>
+        </div>
       </div>
+
+      <!-- Dynamic Subject Cards Grid -->
       <div class="subject-grid" id="subjectGrid"></div>
-      <noscript><p>Enable JavaScript to browse and practise subjects.</p></noscript>
     </section>
 
-    <section class="landing-block" id="features">
-      <div class="section-heading">
-        <h2>Five ways to revise</h2>
-        <p>Use the mode that fits your study session.</p>
+    <!-- Features Section -->
+    <section id="features" class="features-section" aria-labelledby="features-heading">
+      <div class="section-center-head">
+        <h2 class="section-title" id="features-heading">Built for active revision</h2>
+        <p class="section-sub">Six focused tools designed to move concepts into long-term memory.</p>
+
+        <div class="workflow-strip" aria-label="Active revision loop">
+          <span class="workflow-step"><strong>01</strong> Practise MCQs</span>
+          <span class="workflow-arrow" aria-hidden="true">→</span>
+          <span class="workflow-step"><strong>02</strong> Isolate Mistakes</span>
+          <span class="workflow-arrow" aria-hidden="true">→</span>
+          <span class="workflow-step"><strong>03</strong> Retry Until Clear</span>
+        </div>
       </div>
-      <div class="feature-grid">
+
+      <div class="features-grid">
         <article class="feature-card">
-          <span class="feature-icon" aria-hidden="true">📖</span>
+          <div class="feature-card-top">
+            <span class="feature-icon-box tone-blue" aria-hidden="true">📖</span>
+            <span class="feature-tag">Answer Keys</span>
+          </div>
           <h3>Study Bank</h3>
-          <p>Browse questions with answers and available explanations.</p>
+          <p>Browse complete question banks with verified answer keys and structured explanations unlocked.</p>
         </article>
+
         <article class="feature-card">
-          <span class="feature-icon" aria-hidden="true">✍️</span>
+          <div class="feature-card-top">
+            <span class="feature-icon-box tone-indigo" aria-hidden="true">✍️</span>
+            <span class="feature-tag">Instant Grading</span>
+          </div>
           <h3>Sequential Quiz</h3>
-          <p>Go question by question with instant grading.</p>
+          <p>Practise question by question with instant feedback, option shuffling, and single-card reveals.</p>
         </article>
+
         <article class="feature-card">
-          <span class="feature-icon" aria-hidden="true">🎲</span>
+          <div class="feature-card-top">
+            <span class="feature-icon-box tone-purple" aria-hidden="true">🎲</span>
+            <span class="feature-tag">Custom Sets</span>
+          </div>
           <h3>Mock Exam</h3>
-          <p>Practise randomised sets with instant or end-of-exam grading.</p>
+          <p>Generate randomised exam sets filtered by difficulty with instant or end-of-exam grading.</p>
         </article>
+
         <article class="feature-card">
-          <span class="feature-icon" aria-hidden="true">🔄</span>
+          <div class="feature-card-top">
+            <span class="feature-icon-box tone-rose" aria-hidden="true">🔁</span>
+            <span class="feature-tag">Auto-Collected</span>
+          </div>
           <h3>Missed Review</h3>
-          <p>Retry questions you answered incorrectly.</p>
+          <p>Automatically collect wrong answers and retry them until each concept is cleared.</p>
         </article>
+
         <article class="feature-card">
-          <span class="feature-icon" aria-hidden="true">⭐</span>
+          <div class="feature-card-top">
+            <span class="feature-icon-box tone-amber" aria-hidden="true">⭐</span>
+            <span class="feature-tag">Shortcut: S</span>
+          </div>
           <h3>Saved Review</h3>
-          <p>Bookmark tricky questions and practise them later.</p>
+          <p>Bookmark tricky questions during practice and run targeted self-quizzes before exams.</p>
         </article>
+
         <article class="feature-card">
-          <span class="feature-icon" aria-hidden="true">💾</span>
+          <div class="feature-card-top">
+            <span class="feature-icon-box tone-emerald" aria-hidden="true">💾</span>
+            <span class="feature-tag">JSON Backup</span>
+          </div>
           <h3>Your Progress</h3>
-          <p>The quiz workspace saves progress in your browser, with JSON export and import.</p>
+          <p>Automatic browser persistence per subject with one-click JSON backup export and import.</p>
         </article>
       </div>
     </section>
 
-    <section class="landing-block" id="faq">
-      <div class="section-heading">
-        <h2>Common questions</h2>
+    <!-- FAQ Section -->
+    <section id="faq" class="faq-section" aria-labelledby="faq-heading">
+      <div class="section-center-head">
+        <h2 class="section-title" id="faq-heading">Common questions</h2>
+        <p class="section-sub">Quick answers about offline usage, storage, and custom question banks.</p>
       </div>
-      <details class="faq-item">
-        <summary>Do I need an account?</summary>
-        <p>No. You can use the workspace immediately without signing up.</p>
-      </details>
-      <details class="faq-item">
-        <summary>Where is my progress saved?</summary>
-        <p>In your browser's local storage. It doesn't sync automatically across devices, so export a JSON backup before clearing browser data or switching browsers.</p>
-      </details>
-      <details class="faq-item">
-        <summary>Does it work offline?</summary>
-        <p>Yes. Over HTTPS or localhost, ReviseLoop caches the app shell and any question bank you visit online so you can keep revising offline. It also runs directly from local files.</p>
-      </details>
-      <details class="faq-item">
-        <summary>Can I use my own questions?</summary>
-        <p>Yes. The quiz workspace accepts custom JSON or JavaScript question banks. Only load JavaScript files from sources you trust.</p>
-      </details>
+
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Do I need an account?</summary>
+          <p>No. Every subject opens immediately with zero sign-ups, logins, or tracking servers.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Where is my progress saved?</summary>
+          <p>Your answers, accuracy stats, missed questions, and bookmarks are stored locally in your browser per subject. You can also export or import a JSON backup anytime from the quiz sidebar.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Does it work offline?</summary>
+          <p>Yes. Once visited online, the Service Worker caches the workspace and question banks for offline use—and you can also run the app directly from local files via <code>file://</code>.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Can I use my own questions?</summary>
+          <p>Yes. Open any subject workspace and click <strong>Upload</strong> to drag-and-drop your own <code>.json</code> or <code>.js</code> question bank, complete with starter templates and instant validation.</p>
+        </details>
+      </div>
     </section>
 
-    <section class="landing-block">
-      <div class="cta-banner">
-        <h2>Ready for your next round?</h2>
-        <p class="cta-motto">Practise. Review. Retry.</p>
-        <a class="btn btn-primary" href="#subjects">Choose a Subject</a>
-      </div>
+    <!-- Centered Call-to-Action Banner -->
+    <section class="cta-banner" aria-labelledby="cta-heading">
+      <h2 id="cta-heading">Ready for your next round?</h2>
+      <p class="cta-tagline">Practise. Review. Retry.</p>
+      <a href="#subjects" class="btn btn-primary cta-btn">Choose a Subject</a>
     </section>
+
+    <!-- Unified Site Footer -->
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="index.html" class="logo footer-logo">Revise<span>Loop</span></a>
+          <p class="footer-desc" data-config-text="brand.footerTagline">
+            An offline-capable MCQ practice and exam revision workspace built for focused active recall.
+          </p>
+          <div class="footer-pills">
+            <span class="footer-pill">No Account Needed</span>
+            <span class="footer-pill">Local Storage</span>
+            <span class="footer-pill">Offline-Capable</span>
+          </div>
+        </div>
+
+        <div class="footer-links-group">
+          <div class="footer-col">
+            <h4>Workspace</h4>
+            <a href="#subjects">Subject Catalog</a>
+            <a href="#features">Study Modes</a>
+            <a href="#faq">Common Questions</a>
+            <a href="#top">Back to Top ↑</a>
+          </div>
+
+          <div class="footer-col">
+            <h4>Info &amp; Source</h4>
+            <button type="button" data-open-dialog="dialog-about">About ReviseLoop</button>
+            <button type="button" data-open-dialog="dialog-offline">Offline &amp; Storage</button>
+            <button type="button" data-open-dialog="dialog-shortcuts">Keyboard Shortcuts</button>
+            <a data-config-href="links.repoUrl" href="https://github.com/asad-ali-sajjad/reviseloop" target="_blank" rel="noopener noreferrer">GitHub Repository ↗</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span data-config-text="brand.copyrightLine">© 2026 ReviseLoop • Offline-capable study workspace</span>
+        <span>Built by <a data-config-href="author.githubUrl" data-config-text="author.name" href="https://github.com/asad-ali-sajjad" target="_blank" rel="noopener noreferrer">asad-ali-sajjad</a></span>
+      </div>
+    </footer>
+
   </main>
 
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <a href="#top" class="logo footer-logo" data-config-logo>Revise<span>Loop</span></a>
-        <p class="footer-motto">Practise. Review. Retry. ↻</p>
-        <p class="footer-desc" data-config-text="brand.footerTagline">A focused workspace for MCQ practice, mock exams and revising your mistakes.</p>
-        <div class="footer-pills">
-          <span class="footer-pill">👤 No Account Needed</span>
-          <span class="footer-pill">💾 Progress Saved in Browser</span>
-          <span class="footer-pill">📶 Offline-Capable</span>
+  <!-- =====================================================================
+       MODAL 1: Rich About ReviseLoop Dialog
+       ===================================================================== -->
+  <dialog class="info-dialog about-dialog" id="dialog-about" aria-labelledby="dialog-about-title">
+    <div class="about-hero">
+      <div class="about-hero-top">
+        <span class="about-brand-pill">Revise<span>Loop</span></span>
+        <button type="button" class="dialog-close" data-close-dialog aria-label="Close dialog">✕</button>
+      </div>
+      <h3 id="dialog-about-title">Built for active recall, not passive re-reading.</h3>
+      <p class="about-lead">
+        A zero-backend MCQ practice and exam revision workspace designed to turn every mistake into measurable mastery.
+      </p>
+    </div>
+
+    <div class="dialog-body">
+      <div class="about-cycle" aria-label="The ReviseLoop three-step revision cycle">
+        <div class="about-step">
+          <span class="about-step-num">01</span>
+          <strong>Practise</strong>
+          <small>Timed mocks &amp; instant quizzes</small>
+        </div>
+        <div class="about-step">
+          <span class="about-step-num">02</span>
+          <strong>Review</strong>
+          <small>Missed items isolated automatically</small>
+        </div>
+        <div class="about-step">
+          <span class="about-step-num">03</span>
+          <strong>Retry</strong>
+          <small>Re-test weak spots until clear</small>
         </div>
       </div>
 
-      <div class="footer-links-group">
-        <nav class="footer-col" aria-label="Study links">
-          <h3>Study</h3>
-          <a href="#subjects">Browse Subjects</a>
-          <a href="quiz.html?subject=deep-learning" data-config-featured="0">Deep Learning Bank</a>
-          <a href="quiz.html?subject=pdc" data-config-featured="1">PDC Bank</a>
-          <button type="button" data-modal="shortcuts">Quiz Shortcuts</button>
-        </nav>
-        <nav class="footer-col" aria-label="Project links">
-          <h3>Project</h3>
-          <button type="button" data-modal="about">About</button>
-          <button type="button" data-modal="privacy">Privacy &amp; Data</button>
-          <a href="https://github.com/asad-ali-sajjad/reviseloop" data-config-href="links.repoUrl" target="_blank" rel="noopener noreferrer">Source Code</a>
-          <a href="https://github.com/asad-ali-sajjad/reviseloop/issues" data-config-href="links.issuesUrl" target="_blank" rel="noopener noreferrer">Report an Issue</a>
-          <a href="#top">Back to Top ↑</a>
-        </nav>
+      <div class="about-pillars">
+        <div class="about-pillar">
+          <span class="about-pillar-icon" aria-hidden="true">🔒</span>
+          <div>
+            <strong>100% Local &amp; Private</strong>
+            <p>Zero accounts, logins, or tracking servers—your progress stays in your browser.</p>
+          </div>
+        </div>
+
+        <div class="about-pillar">
+          <span class="about-pillar-icon" aria-hidden="true">⚡</span>
+          <div>
+            <strong>Offline-First Ready</strong>
+            <p>Works without internet via Service Worker caching or directly over local files.</p>
+          </div>
+        </div>
+
+        <div class="about-pillar">
+          <span class="about-pillar-icon" aria-hidden="true">📤</span>
+          <div>
+            <strong>Custom Bank Support</strong>
+            <p>Import your own <code>.json</code> or <code>.js</code> question sets inside any workspace.</p>
+          </div>
+        </div>
+
+        <div class="about-pillar">
+          <span class="about-pillar-icon" aria-hidden="true">⌨️</span>
+          <div>
+            <strong>Keyboard-Driven Speed</strong>
+            <p>Answer, navigate, reveal, and bookmark without lifting your hands.</p>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="footer-bottom">
-      <span><span data-config-text="brand.copyrightLine">Crafted for focused exam preparation</span> • <strong data-config-text="brand.name">ReviseLoop</strong></span>
-      <span>Built by <a href="https://github.com/asad-ali-sajjad" target="_blank" rel="noopener noreferrer">asad-ali-sajjad</a></span>
+    <div class="dialog-footer">
+      <button type="button" class="btn btn-secondary dialog-footer-btn" data-switch-dialog="dialog-shortcuts">⌨️ Shortcuts</button>
+      <a href="#subjects" class="btn btn-primary dialog-footer-btn" data-close-dialog>Explore Subjects →</a>
     </div>
-  </footer>
+  </dialog>
 
-  <dialog class="landing-dialog" id="how" aria-labelledby="how-title">
+  <!-- =====================================================================
+       MODAL 2: Offline & Local Storage Dialog
+       ===================================================================== -->
+  <dialog class="info-dialog" id="dialog-offline" aria-labelledby="dialog-offline-title">
+    <div class="dialog-head">
+      <div>
+        <span class="dialog-eyebrow">Data &amp; Privacy</span>
+        <h3 id="dialog-offline-title">Offline &amp; Local Storage</h3>
+      </div>
+      <button type="button" class="dialog-close" data-close-dialog aria-label="Close dialog">✕</button>
+    </div>
     <div class="dialog-body">
-      <h2 id="how-title">How the loop works</h2>
-      <ul>
-        <li><strong>Practise:</strong> answer questions in sequential quiz or timed mock exam mode.</li>
-        <li><strong>Review:</strong> study explanations and revisit your missed and saved questions.</li>
-        <li><strong>Retry:</strong> drill missed questions until you answer them correctly.</li>
+      <div class="dialog-info-card">
+        <strong>Browser Persistence</strong>
+        <p>All quiz answers, accuracy stats, missed lists, bookmarks, and theme settings are saved locally in <code>localStorage</code> per subject—nothing is ever sent to a server.</p>
+      </div>
+      <div class="dialog-info-card">
+        <strong>Offline Caching &amp; Portable Backups</strong>
+        <p>When opened over HTTPS, the Service Worker caches the workspace and visited banks for offline use. You can also export or import a portable <code>.json</code> backup anytime from the quiz sidebar.</p>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- =====================================================================
+       MODAL 3: Keyboard Shortcuts Dialog
+       ===================================================================== -->
+  <dialog class="info-dialog" id="dialog-shortcuts" aria-labelledby="dialog-shortcuts-title">
+    <div class="dialog-head">
+      <div>
+        <span class="dialog-eyebrow">Workspace Controls</span>
+        <h3 id="dialog-shortcuts-title">Quiz Keyboard Shortcuts</h3>
+      </div>
+      <button type="button" class="dialog-close" data-close-dialog aria-label="Close dialog">✕</button>
+    </div>
+    <div class="dialog-body">
+      <ul class="dialog-kbd-list">
+        <li><span>Next / Previous question</span><span><kbd>N</kbd> / <kbd>K</kbd> or <kbd>↓</kbd> / <kbd>↑</kbd></span></li>
+        <li><span>Select option A–D</span><span><kbd>A</kbd>–<kbd>D</kbd> or <kbd>1</kbd>–<kbd>4</kbd></span></li>
+        <li><span>Bookmark focused question</span><span><kbd>S</kbd></span></li>
+        <li><span>Reveal answer (Quiz mode)</span><span><kbd>E</kbd></span></li>
+        <li><span>Search questions / Toggle sidebar</span><span><kbd>/</kbd> / <kbd>[</kbd></span></li>
+        <li><span>Open interactive shortcut guide</span><span><kbd>?</kbd></span></li>
       </ul>
-      <form method="dialog"><button class="btn btn-primary" autofocus>Got it</button></form>
-    </div>
-  </dialog>
-
-  <dialog class="landing-dialog" id="about" aria-labelledby="about-title">
-    <div class="dialog-body">
-      <h2 id="about-title">About ReviseLoop</h2>
-      <p>ReviseLoop began as an interactive MCQ practice website and grew into a zero-backend exam revision workspace.</p>
-      <p>It is built with vanilla HTML, CSS, and JavaScript, with a focus on fast Computer Science exam preparation.</p>
-      <form method="dialog"><button class="btn btn-primary" autofocus>Close</button></form>
-    </div>
-  </dialog>
-
-  <dialog class="landing-dialog" id="privacy" aria-labelledby="privacy-title">
-    <div class="dialog-body">
-      <h2 id="privacy-title">Privacy &amp; data</h2>
-      <p>ReviseLoop requires no account and runs without a backend server. All quiz answers, bookmarks, and stats stay in your browser's local storage.</p>
-      <p>When online, this landing page loads the Fraunces display font from Google Fonts, which sends a standard font request to Google. Static hosting providers and external GitHub links follow their own privacy policies.</p>
-      <form method="dialog"><button class="btn btn-primary" autofocus>Close</button></form>
-    </div>
-  </dialog>
-
-  <dialog class="landing-dialog" id="shortcuts" aria-labelledby="shortcuts-title">
-    <div class="dialog-body">
-      <h2 id="shortcuts-title">Quiz shortcuts</h2>
-      <p>Available inside the quiz workspace:</p>
-      <ul>
-        <li><kbd>N</kbd> <kbd>J</kbd> <kbd>↓</kbd> Next question</li>
-        <li><kbd>K</kbd> <kbd>↑</kbd> Previous question</li>
-        <li><kbd>A</kbd>–<kbd>D</kbd> or <kbd>1</kbd>–<kbd>4</kbd> Select an option</li>
-        <li><kbd>S</kbd> Save or unsave question</li>
-        <li><kbd>E</kbd> Reveal answer in Sequential Quiz</li>
-        <li><kbd>T</kbd> Scroll back to top</li>
-        <li><kbd>/</kbd> Focus question search</li>
-        <li><kbd>[</kbd> Toggle desktop sidebar</li>
-        <li><kbd>?</kbd> Open shortcuts, <kbd>Esc</kbd> Close</li>
-      </ul>
-      <form method="dialog"><button class="btn btn-primary" autofocus>Close</button></form>
     </div>
   </dialog>
 

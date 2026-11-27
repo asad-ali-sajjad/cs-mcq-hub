@@ -33,12 +33,16 @@
 
   const gridEl = document.getElementById("subjectGrid");
   const searchInput = document.getElementById("searchInput");
+  const searchClearBtn = document.getElementById("searchClearBtn");
+  const searchKbd = document.getElementById("searchKbd");
   const filterTabs = document.getElementById("filterTabs");
   const searchScopeNote = document.getElementById("searchScopeNote");
   const activeTrackStat = document.getElementById("activeSemStat");
   const totalSubjectsStat = document.getElementById("totalSubjectsStat");
   const attemptedStat = document.getElementById("attemptedStat");
+  const attemptedLabel = document.getElementById("attemptedLabel");
   const accuracyStat = document.getElementById("accuracyStat");
+  const accuracyLabel = document.getElementById("accuracyLabel");
   const continueSection = document.getElementById("continueSection");
 
   let activeFilter = defaultTrack;
@@ -82,19 +86,21 @@
       const updatedAt = typeof parsed.updatedAt === "number" ? parsed.updatedAt : 0;
       const stats = parsed.stats && typeof parsed.stats === "object" ? parsed.stats : null;
       const total = getSubjectTotalCount(sub, stats);
+      const missedCount = Array.isArray(parsed.missed) ? parsed.missed.length : 0;
+      const savedCount = Array.isArray(parsed.bookmarked) ? parsed.bookmarked.length : 0;
 
       if (stats && typeof stats.answered === "number") {
         const attempted = Math.max(0, stats.answered);
         const correct = typeof stats.correct === "number" ? Math.max(0, stats.correct) : 0;
         const wrong = typeof stats.wrong === "number" ? Math.max(0, stats.wrong) : 0;
         const accuracy = attempted > 0 && typeof stats.accuracy === "number" ? stats.accuracy : null;
-        return { attempted, correct, wrong, total, accuracy, exact: true, updatedAt };
+        return { attempted, correct, wrong, missedCount, savedCount, total, accuracy, exact: true, updatedAt };
       }
 
       // Legacy fallback before subject is re-opened under updated quiz-engine.js
       const selected = parsed.selected && typeof parsed.selected === "object" ? parsed.selected : {};
       const attempted = Object.keys(selected).length;
-      return { attempted, correct: 0, wrong: 0, total, accuracy: null, exact: false, updatedAt };
+      return { attempted, correct: 0, wrong: 0, missedCount, savedCount, total, accuracy: null, exact: false, updatedAt };
     } catch (err) {
       return null;
     }
@@ -137,17 +143,43 @@
 
   function updateHeroStats(summary) {
     const activeReadyCount = catalog.filter((s) => s.ready && normalizeTrack(s) === activeTrack).length;
+    const totalQuestions = catalog.reduce((acc, s) => {
+      return acc + (s && s.ready && typeof s.questionCount === "number" ? s.questionCount : 0);
+    }, 0);
+
     if (activeTrackStat) {
       activeTrackStat.textContent = `${activeReadyCount} Subject${activeReadyCount === 1 ? "" : "s"}`;
     }
     if (totalSubjectsStat) {
       totalSubjectsStat.textContent = String(catalog.length);
     }
-    if (attemptedStat) {
-      attemptedStat.textContent = String(summary.totalAttempted);
-    }
-    if (accuracyStat) {
-      accuracyStat.textContent = summary.overallAccuracy == null ? "—" : `${summary.overallAccuracy}%`;
+
+    if (summary.totalAttempted === 0) {
+      if (attemptedStat) {
+        attemptedStat.textContent = totalQuestions > 0 ? `${totalQuestions}+` : "Offline";
+      }
+      if (attemptedLabel) {
+        attemptedLabel.textContent = totalQuestions > 0 ? "Questions" : "Workspace";
+      }
+      if (accuracyStat) {
+        accuracyStat.textContent = "Local";
+      }
+      if (accuracyLabel) {
+        accuracyLabel.textContent = "Auto-Saved";
+      }
+    } else {
+      if (attemptedStat) {
+        attemptedStat.textContent = String(summary.totalAttempted);
+      }
+      if (attemptedLabel) {
+        attemptedLabel.textContent = "Attempted";
+      }
+      if (accuracyStat) {
+        accuracyStat.textContent = summary.overallAccuracy == null ? "—" : `${summary.overallAccuracy}%`;
+      }
+      if (accuracyLabel) {
+        accuracyLabel.textContent = "Accuracy";
+      }
     }
   }
 
@@ -169,7 +201,10 @@
       const accPart = latestProgress.accuracy != null
         ? ` • ${latestProgress.correct} correct (${latestProgress.accuracy}%)`
         : "";
-      subline = countPart + accPart;
+      const missedPart = latestProgress.missedCount > 0
+        ? ` • ${latestProgress.missedCount} to retry`
+        : "";
+      subline = countPart + accPart + missedPart;
     } else if (latestProgress.total != null) {
       subline = `Last opened • ${latestProgress.total} questions available`;
     } else {
@@ -214,6 +249,18 @@
     return escapeHtml(sub.status || readyStatus);
   }
 
+  function renderCardReviewPills(progress) {
+    if (!progress) return "";
+    const chips = [];
+    if (progress.missedCount > 0) {
+      chips.push(`<span class="review-chip is-missed">${progress.missedCount} to retry</span>`);
+    }
+    if (progress.savedCount > 0) {
+      chips.push(`<span class="review-chip is-saved">${progress.savedCount} saved</span>`);
+    }
+    return chips.length > 0 ? `<div class="card-review-pills">${chips.join("")}</div>` : "";
+  }
+
   function renderCardProgress(progress) {
     if (!progress || progress.attempted <= 0) return "";
 
@@ -243,9 +290,16 @@
     `;
   }
 
+  function syncSearchControls() {
+    const hasText = searchTerm.length > 0;
+    if (searchClearBtn) searchClearBtn.hidden = !hasText;
+    if (searchKbd) searchKbd.hidden = hasText;
+  }
+
   function renderSubjects() {
     if (!gridEl) return;
 
+    syncSearchControls();
     const query = searchTerm.trim().toLowerCase();
     const isSearchingAll = query.length > 0;
 
@@ -270,9 +324,26 @@
       gridEl.innerHTML = `
         <div class="empty-state">
           <h3>No matching subjects found</h3>
-          <p>Try searching another keyword or switch to <strong>All Subjects</strong>.</p>
+          <p>Try searching another keyword or reset your filters to view all subjects.</p>
+          <button type="button" class="btn btn-secondary" id="resetCatalogFiltersBtn">Reset Filters</button>
         </div>
       `;
+      const resetBtn = document.getElementById("resetCatalogFiltersBtn");
+      if (resetBtn) {
+        resetBtn.addEventListener("click", () => {
+          searchTerm = "";
+          if (searchInput) searchInput.value = "";
+          activeFilter = "All";
+          if (filterTabs) {
+            filterTabs.querySelectorAll(".filter-btn").forEach((b) => {
+              const isAll = b.dataset.filter === "All";
+              b.classList.toggle("active", isAll);
+              b.setAttribute("aria-pressed", String(isAll));
+            });
+          }
+          renderSubjects();
+        });
+      }
       return;
     }
 
@@ -280,13 +351,19 @@
       const track = normalizeTrack(sub);
       const progress = sub.ready ? readSubjectProgress(sub) : null;
       const badgeText = formatCardBadge(sub, track, progress);
+      const codePill = sub.courseCode
+        ? `<span class="course-code-pill">${escapeHtml(sub.courseCode)}</span>`
+        : "";
 
       if (!sub.ready) {
         return `
           <article class="subject-card is-upcoming" aria-disabled="true">
             <div class="card-top">
               <span class="subject-icon" aria-hidden="true">${escapeHtml(sub.icon || "📘")}</span>
-              <span class="subject-badge is-upcoming">${badgeText}</span>
+              <div class="card-badges">
+                ${codePill}
+                <span class="subject-badge is-upcoming">${badgeText}</span>
+              </div>
             </div>
             <h3>${escapeHtml(sub.title)}</h3>
             <p>${escapeHtml(sub.description || "")}</p>
@@ -301,10 +378,14 @@
         <article class="subject-card">
           <div class="card-top">
             <span class="subject-icon" aria-hidden="true">${escapeHtml(sub.icon || "📘")}</span>
-            <span class="subject-badge">${badgeText}</span>
+            <div class="card-badges">
+              ${codePill}
+              <span class="subject-badge">${badgeText}</span>
+            </div>
           </div>
           <h3>${escapeHtml(sub.title)}</h3>
           <p>${escapeHtml(sub.description || "")}</p>
+          ${renderCardReviewPills(progress)}
           ${renderCardProgress(progress)}
           <a href="${targetUrl}" class="card-btn">${ctaLabel}</a>
         </article>
@@ -349,6 +430,15 @@
     searchInput.addEventListener("input", (e) => {
       searchTerm = e.target.value;
       renderSubjects();
+    });
+  }
+
+  if (searchClearBtn && searchInput) {
+    searchClearBtn.addEventListener("click", () => {
+      searchTerm = "";
+      searchInput.value = "";
+      renderSubjects();
+      searchInput.focus();
     });
   }
 

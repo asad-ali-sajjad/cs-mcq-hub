@@ -1,114 +1,130 @@
-window.SITE_CONFIG = {
-  brand: {
-    name: "ReviseLoop",
-    tagline: "Practise. Review. Retry.",
-    logoPrefix: "Revise",
-    logoSuffix: "Loop",
-    metaDescription: "An offline-capable MCQ practice and exam revision workspace with mock exams, mistake review and progress tracking.",
-    heroTag: "🎓 Computer Science Exam Prep",
-    heroHeadline: "<span>Practise.</span> <span>Review.</span> <span>Retry.</span>",
-    heroDescription: "Turn every wrong answer into your next study step. Practise MCQs, take mock exams and revisit the questions you missed.",
-    footerTagline: "A focused workspace for MCQ practice, mock exams and revising your mistakes.",
-    quizFooterTagline: "Focused MCQ practice, mock exams and mistake review.",
-    copyrightLine: "Crafted for focused exam preparation"
-  },
-  links: {
-    liveUrl: "https://asad-ali-sajjad.github.io/reviseloop/",
-    repoUrl: "https://github.com/asad-ali-sajjad/reviseloop",
-    issuesUrl: "https://github.com/asad-ali-sajjad/reviseloop/issues",
-    featuredSubjects: [
-      { label: "Deep Learning Bank", subjectId: "deep-learning" },
-      { label: "PDC Bank", subjectId: "pdc" }
-    ]
-  },
-  catalog: {
-    defaultTrack: "Active Track",
-    activeTrackStatLabel: "Active Study Track",
-    tracks: [
-      { id: "Active Track", role: "active", label: "⚡ Active Track" },
-      { id: "Electives", role: "electives", label: "🚀 Electives" },
-      { id: "Core CS", role: "core", label: "📚 Core CS" },
-      { id: "All", role: "all", label: "All Subjects" }
-    ],
-    defaultStatusReady: "Exam Prep",
-    defaultStatusUpcoming: "Coming Soon"
-  },
-  quizDefaults: {
-    fallbackSubjectId: "pdc",
-    fallbackCourseCode: "REVISELOOP",
-    fallbackTitle: "ReviseLoop MCQ Practice",
-    fallbackSubtitle: "Interactive MCQ Practice & Exam Review",
-    defaultPerPage: 50,
-    perPageOptions: [50, 100, 9999],
-    defaultMockCount: 25,
-    mockCountOptions: [10, 25, 50, 100],
-    undoToastDurationMs: 6000,
-    maxUploadSizeMB: 10
-  },
-  storage: {
-    prefix: "reviseloop_",
-    version: "v1",
-    themeKey: "reviseloop_theme"
-  }
-};
+/* ==========================================================================
+   ReviseLoop — Central Site Configuration & DOM Hydration
+   Loaded synchronously before page scripts so all views share one source of truth.
+   ========================================================================== */
 
 (function () {
-  const config = window.SITE_CONFIG;
+  const SITE_CONFIG = {
+    brand: {
+      name: "ReviseLoop",
+      logoPrefix: "Revise",
+      logoAccent: "Loop",
+      tagline: "Close the gap between studying and knowing.",
+      metaDescription:
+        "An offline-capable MCQ practice and exam revision workspace with mock exams, mistake review, and progress tracking.",
+      footerTagline:
+        "An offline-capable MCQ practice and exam revision workspace built for focused active recall.",
+      quizFooterTagline:
+        "Focused MCQ practice, mock exams, and active-recall revision.",
+      copyrightLine: "© 2026 ReviseLoop • Offline-capable study workspace"
+    },
+    author: {
+      name: "asad-ali-sajjad",
+      githubUrl: "https://github.com/asad-ali-sajjad"
+    },
+    links: {
+      repoUrl: "https://github.com/asad-ali-sajjad/reviseloop",
+      liveUrl: "https://asad-ali-sajjad.github.io/reviseloop/",
+      issuesUrl: "https://github.com/asad-ali-sajjad/reviseloop/issues"
+    },
+    storage: {
+      prefix: "reviseloop_",
+      version: "v1",
+      themeKey: "reviseloop_theme"
+    },
+    catalog: {
+      defaultTrack: "Active Track",
+      defaultStatusReady: "Exam Prep",
+      defaultStatusUpcoming: "Coming Soon",
+      tracks: [
+        { id: "Active Track", role: "active", label: "⚡ Active Track" },
+        { id: "Electives", role: "electives", label: "🚀 Electives" },
+        { id: "Core CS", role: "core", label: "📚 Core CS" },
+        { id: "All", role: "all", label: "All Subjects" }
+      ]
+    },
+    quizDefaults: {
+      fallbackSubjectId: "pdc",
+      fallbackCourseCode: "BANK",
+      fallbackTitle: "Subject Practice",
+      fallbackSubtitle: "Interactive MCQ Practice & Exam Review",
+      defaultPerPage: 50,
+      perPageOptions: [50, 100, 9999],
+      defaultMockCount: 25,
+      mockCountOptions: [10, 25, 50, 100],
+      undoToastDurationMs: 6000,
+      maxUploadSizeMB: 10
+    }
+  };
 
-  function getValue(path) {
-    return path.split(".").reduce((value, key) => value && value[key], config);
+  window.SITE_CONFIG = SITE_CONFIG;
+
+  function resolveConfigPath(path) {
+    if (!path) return undefined;
+    return String(path)
+      .split(".")
+      .reduce((acc, part) => (acc && acc[part] !== undefined ? acc[part] : undefined), SITE_CONFIG);
   }
 
-  function hydratePage() {
+  function hydrateBrandLogo(el) {
+    const prefix = SITE_CONFIG.brand.logoPrefix || "Revise";
+    const accent = SITE_CONFIG.brand.logoAccent || "Loop";
+    el.innerHTML =
+      `<span class="logo-mark" aria-hidden="true">` +
+        `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">` +
+          `<path d="M21 12a9 9 0 1 1-3.2-6.9"/>` +
+          `<path d="M21 3v6h-6"/>` +
+        `</svg>` +
+      `</span>` +
+      `<span>${prefix}<span class="logo-accent">${accent}</span></span>`;
+  }
+
+  function hydrateDomFromConfig() {
     document.querySelectorAll("[data-config-text]").forEach((el) => {
-      const value = getValue(el.dataset.configText);
-      if (value != null) el.textContent = value;
+      const val = resolveConfigPath(el.getAttribute("data-config-text"));
+      if (val !== undefined && val !== null) {
+        el.textContent = String(val);
+      }
     });
 
     document.querySelectorAll("[data-config-html]").forEach((el) => {
-      const value = getValue(el.dataset.configHtml);
-      if (value != null) el.innerHTML = value;
+      const val = resolveConfigPath(el.getAttribute("data-config-html"));
+      if (val !== undefined && val !== null) {
+        el.innerHTML = String(val);
+      }
     });
 
     document.querySelectorAll("[data-config-href]").forEach((el) => {
-      const value = getValue(el.dataset.configHref);
-      if (value != null) el.href = value;
+      const val = resolveConfigPath(el.getAttribute("data-config-href"));
+      if (val !== undefined && val !== null) {
+        el.setAttribute("href", String(val));
+      }
     });
 
     document.querySelectorAll("[data-config-meta-description]").forEach((el) => {
-      const value = getValue(el.dataset.configMetaDescription);
-      if (value != null) el.setAttribute("content", value);
-    });
-
-    document.querySelectorAll("[data-config-logo]").forEach((el) => {
-      const { name, logoPrefix, logoSuffix } = config.brand;
-      el.textContent = logoPrefix || name || "";
-      if (logoPrefix && logoSuffix) {
-        const suffix = document.createElement("span");
-        suffix.textContent = logoSuffix;
-        el.appendChild(suffix);
+      const val = resolveConfigPath(el.getAttribute("data-config-meta-description"));
+      if (val !== undefined && val !== null) {
+        el.setAttribute("content", String(val));
       }
     });
 
-    document.querySelectorAll("[data-config-featured]").forEach((el) => {
-      const subject = config.links.featuredSubjects[Number(el.dataset.configFeatured)];
-      if (subject) {
-        el.textContent = subject.label;
-        el.href = `quiz.html?subject=${encodeURIComponent(subject.subjectId)}`;
-      }
-    });
+    document.querySelectorAll("[data-config-logo]").forEach(hydrateBrandLogo);
 
-    document.querySelectorAll("[data-config-title-format]").forEach((el) => {
-      document.title = el.dataset.configTitleFormat.replace(/\{([\w.]+)\}/g, (match, path) => {
-        const value = getValue(path);
-        return value == null ? match : value;
-      });
-    });
+    const titleEl = document.querySelector("title[data-config-title-format]");
+    if (titleEl) {
+      const template = titleEl.getAttribute("data-config-title-format");
+      if (template) {
+        document.title = template.replace(/\{([^}]+)\}/g, (_, key) => {
+          const val = resolveConfigPath(key.trim());
+          return val !== undefined && val !== null ? String(val) : "";
+        });
+      }
+    }
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", hydratePage);
+    document.addEventListener("DOMContentLoaded", hydrateDomFromConfig);
   } else {
-    hydratePage();
+    hydrateDomFromConfig();
   }
 })();
