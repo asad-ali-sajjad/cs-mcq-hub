@@ -1544,3 +1544,77 @@ section.mcq-container {
   .floating-nav-dock { bottom: 16px; right: 14px; gap: 7px; }
   .float-nav-btn { padding: 10px 15px; font-size: 0.85rem; }
 }
+
+
+
+
+/* ===== MOBILE FIXES: quiz ===== */
+.app-shell, main.quiz-main { min-width: 0; }
+.mcq-card, .mcq-question, .mcq-answer-banner,
+.quiz-hero-card { overflow-wrap: anywhere; }
+.mcq-option > :first-child { min-width: 0; overflow-wrap: anywhere; }
+.kbd-interactive-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
+}
+
+/* Modal and drawer scrolling */
+.hub-modal { max-height: 88vh; max-height: 88dvh; }
+.hub-modal-body { min-height: 0; overscroll-behavior: contain; }
+.hub-modal-body > * { flex-shrink: 0; }
+.sidebar-scroll { min-height: 0; overscroll-behavior: contain; }
+html:has(.hub-modal-backdrop.open) { overflow: hidden; }
+
+@media (max-width: 920px) {
+  html:has(body.mobile-sidebar-open) { overflow: hidden; }
+  header.quiz-topbar,
+  [data-theme="dark"] header.quiz-topbar {
+    background: var(--bg);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .sidebar-backdrop, .hub-modal-backdrop {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .sb-search, .range-select, .mock-field select { font-size: 16px; }
+}
+
+@media (max-width: 640px) {
+  .quiz-topbar-inner { padding: 10px 12px; gap: 8px; }
+  .topbar-left, .topbar-right { gap: 6px; }
+  .topbar-action-btn[aria-label="Open keyboard shortcuts"] { display: none; }
+
+  .mock-grid { grid-template-columns: minmax(0, 1fr); }
+  .mock-panel { padding: 18px 16px; }
+
+  .page-controls { width: 100%; flex-wrap: nowrap; }
+  .range-select { flex: 1 1 0; min-width: 0; }
+
+  .card-meta-left { flex: 1 1 auto; }
+  .meta-inline { min-width: 0; }
+  .card-right-btns { flex-wrap: wrap; flex-shrink: 1; max-width: 100%; }
+  .mcq-option { padding: 12px; }
+
+  /* Side-by-side dock covers less of the question */
+  .floating-nav-dock { flex-direction: row-reverse; bottom: 12px; right: 12px; }
+  .float-nav-btn { padding: 9px 14px; }
+  main.quiz-main { padding: 0 12px 80px; }
+}
+
+/* Upload is still available in the sidebar and footer */
+@media (max-width: 379px) {
+  .topbar-action-btn[aria-label="Upload custom MCQ file"] { display: none; }
+}
+
+@media (hover: none) {
+  .sb-nav-btn:hover, .sb-util-btn:not(.sb-reset-btn):hover,
+  .sb-upload-btn:hover, .topbar-action-btn:hover,
+  .page-btn:hover:not(:disabled), .primary-btn:hover,
+  .float-next-btn:hover, .float-top-btn:hover,
+  .kbd-item-btn:hover, .upload-dropzone:hover { transform: none; }
+  .mcq-option:hover:not(.locked):not(:active) { transform: none; }
+  .mcq-option:hover:not(.locked):not(.selected-pending):not(.correct):not(.wrong):not(:active) {
+    background: var(--bg);
+    border-color: var(--border);
+  }
+}
