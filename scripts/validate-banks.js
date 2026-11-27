@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* ==========================================================================
-   CS MCQ Hub — Automated MCQ Bank & Catalog Validator
+   ReviseLoop — Automated MCQ Bank & Catalog Validator
    Zero external dependencies (uses built-in Node.js fs, path, vm).
    Run locally: node scripts/validate-banks.js
    ========================================================================== */
@@ -280,7 +280,7 @@ function main() {
 
   validateCatalog(catalogIndex, bankById, bankByRelPath);
 
-  console.log("=== CS MCQ Hub — Question Bank Validation ===");
+  console.log("=== ReviseLoop — Question Bank Validation ===");
   for (const item of summary) {
     console.log(`  ✅ ${item.relPath} (${item.count} MCQs)`);
   }

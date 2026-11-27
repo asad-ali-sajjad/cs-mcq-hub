@@ -1,7 +1,11 @@
+/* ==========================================================================
+   ReviseLoop — Persistent Light / Dark Theme Switcher
+   ========================================================================== */
+
 (function () {
   const CFG = window.SITE_CONFIG || {};
   const storage = CFG.storage || {};
-  const themeKey = storage.themeKey || "cs_mcq_hub_theme";
+  const themeKey = storage.themeKey || "reviseloop_theme";
   const themeBtn = document.getElementById("themeBtn");
 
   function readSavedTheme() {

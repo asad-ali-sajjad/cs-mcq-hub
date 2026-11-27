@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title data-config-title-format="MCQ Practice &amp; Review — {brand.name}">MCQ Practice &amp; Review</title>
-  <meta name="description" data-config-meta-description="brand.metaDescription" content="Interactive, offline-friendly MCQ practice, randomized mock exams, and active-recall review for Computer Science courses.">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233b5bdb'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='28' fill='%23ffffff'%3ECS%3C/text%3E%3C/svg%3E">
+  <title data-config-title-format="MCQ Practice &amp; Review — {brand.name}">MCQ Practice &amp; Review — ReviseLoop</title>
+  <meta name="description" data-config-meta-description="brand.metaDescription" content="An offline-capable MCQ practice and exam revision workspace with mock exams, mistake review, and progress tracking.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233b5bdb'/%3E%3Cpath d='M46 32a14 14 0 1 1-5-10.7' fill='none' stroke='%23fff' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M43 12v12H31' fill='none' stroke='%23fff' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="assets/css/global.css">
   <link rel="stylesheet" href="assets/css/quiz.css">
 </head>
 <body class="quiz-page">
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
 
   <!-- Ambient Background Blobs -->
   <div class="blob blob1" aria-hidden="true"></div>
@@ -23,9 +25,9 @@
   <aside class="sidebar" id="app-sidebar" aria-label="Quiz Navigation Sidebar">
     <div class="sidebar-top">
       <div class="sidebar-brand">
-        <span class="brand-badge-icon" aria-hidden="true">⚡</span>
+        <span class="brand-badge-icon" aria-hidden="true">🔄</span>
         <div class="brand-text-wrap">
-          <span class="brand-title" id="sb-course-title" data-config-text="brand.name"></span>
+          <span class="brand-title" id="sb-course-title" data-config-text="brand.name">ReviseLoop</span>
           <span class="brand-sub" id="sb-total-sub">Loading bank...</span>
         </div>
       </div>
@@ -48,8 +50,8 @@
           </div>
           <div class="sb-track" aria-hidden="true"><div class="sb-fill" id="sb-progress-fill"></div></div>
           <div class="sb-telemetry-foot">
-            <span class="txt-ok" id="sb-ok-text">✓ 0 Correct</span>
-            <span class="txt-bad" id="sb-bad-text">✗ 0 Wrong</span>
+            <span class="txt-ok" id="sb-ok-text">✅ 0 Correct</span>
+            <span class="txt-bad" id="sb-bad-text">❌ 0 Wrong</span>
           </div>
         </div>
       </div>
@@ -142,7 +144,7 @@
       </div>
     </header>
 
-    <main class="quiz-main">
+    <main class="quiz-main" id="main-content">
       <!-- Subject Hero Card -->
       <section class="quiz-hero-card">
         <span class="tag quiz-code-tag" id="hero-code">LOADING</span>
@@ -155,8 +157,8 @@
       <div class="stats-bar" id="standard-stats-bar">
         <div class="stats-pills">
           <span class="stat-badge" id="showing-badge">0 of 0</span>
-          <span class="stat-badge green" id="correct-badge">✓ 0</span>
-          <span class="stat-badge red" id="wrong-badge">✗ 0</span>
+          <span class="stat-badge green" id="correct-badge">✅ 0</span>
+          <span class="stat-badge red" id="wrong-badge">❌ 0</span>
           <button type="button" class="action-btn practice-reset-inline" id="practice-reset-btn" style="display:none;" onclick="resetProgress()" title="Reset Sequential Quiz answers">↺ Reset Quiz</button>
           <button type="button" class="action-btn" id="clear-filters-btn" style="display:none;" onclick="clearAllFilters()">✕ Clear</button>
         </div>
@@ -196,8 +198,8 @@
         </div>
 
         <div class="footer-bottom">
-          <span><span data-config-text="brand.copyrightLine">Crafted for focused exam preparation</span> • <strong data-config-text="brand.name"></strong></span>
-          <span>Open-source static study workspace</span>
+          <span><span data-config-text="brand.copyrightLine">Crafted for focused exam preparation</span> • <strong data-config-text="brand.name">ReviseLoop</strong></span>
+          <span>Offline-capable static study workspace</span>
         </div>
       </footer>
 
@@ -230,7 +232,7 @@
              ondrop="handleFileDrop(event)">
           <div class="drop-icon" aria-hidden="true">📂</div>
           <div class="drop-title">Click to choose a file or drag &amp; drop here</div>
-          <div class="drop-sub">Accepted formats: <code>.json</code> or <code>.js</code> (UTF-8 plain text, max <span data-config-text="quizDefaults.maxUploadSizeMB"></span> MB)</div>
+          <div class="drop-sub">Accepted formats: <code>.json</code> or <code>.js</code> (UTF-8 plain text, max <span data-config-text="quizDefaults.maxUploadSizeMB">10</span> MB)</div>
           <input type="file" id="mcq-file-upload" accept=".js,.json" hidden onchange="handleFileUpload(event)">
         </div>
 

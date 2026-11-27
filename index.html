@@ -1,127 +1,279 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title data-config-title-format="{brand.name} — {brand.tagline}">CS MCQ Hub — Study Smarter. Revise Faster.</title>
-    <meta name="description" data-config-meta-description="brand.metaDescription" content="Interactive, offline-friendly MCQ practice, randomized mock exams, and active-recall review for Computer Science courses.">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233b5bdb'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui,sans-serif' font-weight='800' font-size='28' fill='%23ffffff'%3ECS%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="assets/css/home.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-config-title-format="{brand.name} — {brand.tagline}">ReviseLoop — Practise. Review. Retry.</title>
+  <meta name="description" data-config-meta-description="brand.metaDescription" content="An offline-capable MCQ practice and exam revision workspace with mock exams, mistake review and progress tracking.">
+  <meta name="theme-color" content="#3b5bdb">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ReviseLoop — Practise. Review. Retry.">
+  <meta property="og:description" content="An offline-capable MCQ practice and exam revision workspace with mock exams, mistake review and progress tracking.">
+  <meta property="og:url" content="https://asad-ali-sajjad.github.io/reviseloop/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233b5bdb'/%3E%3Cpath d='M46 32a14 14 0 1 1-5-10.7' fill='none' stroke='%23fff' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M43 12v12H31' fill='none' stroke='%23fff' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/global.css">
+  <link rel="stylesheet" href="assets/css/home.css">
 </head>
 <body id="top">
+  <a class="skip-link" href="#subjects">Skip to subjects</a>
 
-    <div class="blob blob1" aria-hidden="true"></div>
-    <div class="blob blob2" aria-hidden="true"></div>
-    <div class="blob blob3" aria-hidden="true"></div>
+  <div class="blob blob1" aria-hidden="true"></div>
+  <div class="blob blob2" aria-hidden="true"></div>
+  <div class="blob blob3" aria-hidden="true"></div>
 
-    <header>
-        <div class="nav">
-            <a href="index.html" class="logo" data-config-logo>CS<span>-MCQ-HUB</span></a>
-            <button type="button" class="theme-btn" id="themeBtn" aria-label="Switch to dark mode" aria-pressed="false">🌙 Dark</button>
+  <header>
+    <div class="nav">
+      <a href="index.html" class="logo" data-config-logo>Revise<span>Loop</span></a>
+      <nav class="nav-links" aria-label="Main">
+        <a href="#subjects">Subjects</a>
+        <a href="#features">Features</a>
+        <a href="#faq">FAQ</a>
+        <button type="button" data-modal="about">About</button>
+      </nav>
+      <button type="button" class="theme-btn" id="themeBtn" aria-label="Switch to dark mode" aria-pressed="false">🌙 Dark</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="tag" data-config-text="brand.heroTag">🎓 Computer Science Exam Prep</span>
+        <h1 data-config-html="brand.heroHeadline"><span>Practise.</span> <span>Review.</span> <span>Retry.</span></h1>
+        <p class="lead" data-config-text="brand.heroDescription">Turn every wrong answer into your next study step. Practise MCQs, take mock exams and revisit the questions you missed.</p>
+        <div class="hero-actions">
+          <a href="#subjects" class="btn btn-primary">Start Practising →</a>
+          <button type="button" class="btn btn-secondary" data-modal="how">How It Works</button>
         </div>
-    </header>
+        <ul class="hero-checks">
+          <li>No account needed</li>
+          <li>Mock exams</li>
+          <li>Mistake review</li>
+        </ul>
+      </div>
 
-    <main>
-        <section class="hero">
-            <div class="hero-copy">
-                <span class="tag" data-config-text="brand.heroTag"></span>
-                <h1 data-config-html="brand.heroHeadline"></h1>
-                <p data-config-text="brand.heroDescription"></p>
-            </div>
-
-            <div class="hero-actions">
-                <a href="#subjects" class="btn btn-primary">Browse Subjects</a>
-                <a href="https://github.com/asad-ali-sajjad/cs-mcq-hub" data-config-href="links.repoUrl" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-                    GitHub Repository
-                </a>
-            </div>
-        </section>
-
-        <section class="continue-area" id="continueSection" hidden aria-label="Continue studying"></section>
-
-        <section class="stats" aria-label="Study statistics">
-            <div class="stat-card">
-                <h2 id="activeSemStat">4 Subjects</h2>
-                <p data-config-text="catalog.activeTrackStatLabel">Active Study Track</p>
-            </div>
-            <div class="stat-card">
-                <h2 id="totalSubjectsStat">9</h2>
-                <p>Total Indexed Courses</p>
-            </div>
-            <div class="stat-card">
-                <h2 id="attemptedStat">0</h2>
-                <p>Questions Attempted</p>
-            </div>
-            <div class="stat-card">
-                <h2 id="accuracyStat">—</h2>
-                <p>Overall Accuracy</p>
-            </div>
-        </section>
-
-        <section class="controls-area" aria-label="Filter and search subjects">
-            <label for="searchInput" class="sr-only">Search subjects, courses, or topics</label>
-            <input
-                type="search"
-                class="search-box"
-                placeholder="🔍 Search subject, course code, or topic..."
-                id="searchInput"
-                autocomplete="off"
-            >
-
-            <div class="filter-row">
-                <div class="filter-tabs" id="filterTabs" role="group" aria-label="Filter by study track"></div>
-                <span class="search-scope-note" id="searchScopeNote" aria-live="polite"></span>
-            </div>
-        </section>
-
-        <section class="subjects" id="subjects">
-            <div class="section-header">
-                <h2 class="section-title">📚 Subjects</h2>
-            </div>
-
-            <div class="subject-grid" id="subjectGrid"></div>
-        </section>
-    </main>
-
-    <footer class="site-footer">
-        <div class="footer-inner">
-            <div class="footer-brand">
-                <a href="index.html" class="logo footer-logo" data-config-logo>CS<span>-MCQ-HUB</span></a>
-                <p class="footer-desc" data-config-text="brand.footerTagline"></p>
-                <div class="footer-pills">
-                    <span class="footer-pill">⚡ Zero-Backend</span>
-                    <span class="footer-pill">💾 Local Progress</span>
-                    <span class="footer-pill">🌗 Light &amp; Dark UI</span>
-                </div>
-            </div>
-
-            <div class="footer-links-group">
-                <div class="footer-col">
-                    <h4>Workspace</h4>
-                    <a href="#subjects">Browse Subjects</a>
-                    <a href="quiz.html?subject=deep-learning" data-config-featured="0">Deep Learning Bank</a>
-                    <a href="quiz.html?subject=pdc" data-config-featured="1">PDC Bank</a>
-                </div>
-                <div class="footer-col">
-                    <h4>Project</h4>
-                    <a href="https://github.com/asad-ali-sajjad/cs-mcq-hub" data-config-href="links.repoUrl" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
-                    <a href="https://github.com/asad-ali-sajjad/cs-mcq-hub/issues" data-config-href="links.issuesUrl" target="_blank" rel="noopener noreferrer">Report an Issue</a>
-                    <a href="#top">Back to Top ↑</a>
-                </div>
-            </div>
+        <div class="demo-card" aria-label="Interactive sample question">
+        <span class="demo-eyebrow">Try a question</span>
+        <h2>What is the worst-case time complexity of binary search on a sorted array?</h2>
+        <div id="demoOptions">
+          <button type="button" class="demo-option">A. O(1)</button>
+          <button type="button" class="demo-option" data-correct>B. O(log n)</button>
+          <button type="button" class="demo-option">C. O(n)</button>
+          <button type="button" class="demo-option">D. O(n log n)</button>
         </div>
+        <p class="demo-feedback" id="demoFeedback" aria-live="polite">Choose an answer.</p>
+        <button type="button" class="theme-btn" id="demoRetry" hidden>↻ Retry</button>
+      </div>
+    </section>
 
-        <div class="footer-bottom">
-            <span><span data-config-text="brand.copyrightLine"></span> • <strong data-config-text="brand.name"></strong></span>
-            <span>Open-source static study workspace</span>
+    <section class="continue-area" id="continueSection" hidden aria-label="Continue studying"></section>
+
+    <section class="stats" aria-label="Study statistics">
+      <div class="stat-card">
+        <h2 id="activeSemStat">—</h2>
+        <p data-config-text="catalog.activeTrackStatLabel">Active Study Track</p>
+      </div>
+      <div class="stat-card">
+        <h2 id="totalSubjectsStat">—</h2>
+        <p>Total Indexed Courses</p>
+      </div>
+      <div class="stat-card">
+        <h2 id="attemptedStat">0</h2>
+        <p>Questions Attempted</p>
+      </div>
+      <div class="stat-card">
+        <h2 id="accuracyStat">—</h2>
+        <p>Overall Accuracy</p>
+      </div>
+    </section>
+
+    <section class="controls-area" aria-label="Filter and search subjects">
+      <label for="searchInput" class="sr-only">Search subjects, courses, or topics</label>
+      <input
+        type="search"
+        class="search-box"
+        placeholder="🔍 Search subject, course code, or topic..."
+        id="searchInput"
+        autocomplete="off"
+      >
+      <div class="filter-row">
+        <div class="filter-tabs" id="filterTabs" role="group" aria-label="Filter by study track"></div>
+        <span class="search-scope-note" id="searchScopeNote" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <section class="subjects" id="subjects" tabindex="-1">
+      <div class="section-header">
+        <h2 class="section-title">📚 Subjects</h2>
+      </div>
+      <div class="subject-grid" id="subjectGrid"></div>
+      <noscript><p>Enable JavaScript to browse and practise subjects.</p></noscript>
+    </section>
+
+    <section class="landing-block" id="features">
+      <div class="section-heading">
+        <h2>Five ways to revise</h2>
+        <p>Use the mode that fits your study session.</p>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <span class="feature-icon" aria-hidden="true">📖</span>
+          <h3>Study Bank</h3>
+          <p>Browse questions with answers and available explanations.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-icon" aria-hidden="true">✍️</span>
+          <h3>Sequential Quiz</h3>
+          <p>Go question by question with instant grading.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-icon" aria-hidden="true">🎲</span>
+          <h3>Mock Exam</h3>
+          <p>Practise randomised sets with instant or end-of-exam grading.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-icon" aria-hidden="true">🔄</span>
+          <h3>Missed Review</h3>
+          <p>Retry questions you answered incorrectly.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-icon" aria-hidden="true">⭐</span>
+          <h3>Saved Review</h3>
+          <p>Bookmark tricky questions and practise them later.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-icon" aria-hidden="true">💾</span>
+          <h3>Your Progress</h3>
+          <p>The quiz workspace saves progress in your browser, with JSON export and import.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="landing-block" id="faq">
+      <div class="section-heading">
+        <h2>Common questions</h2>
+      </div>
+      <details class="faq-item">
+        <summary>Do I need an account?</summary>
+        <p>No. You can use the workspace immediately without signing up.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Where is my progress saved?</summary>
+        <p>In your browser's local storage. It doesn't sync automatically across devices, so export a JSON backup before clearing browser data or switching browsers.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Does it work offline?</summary>
+        <p>Yes. Over HTTPS or localhost, ReviseLoop caches the app shell and any question bank you visit online so you can keep revising offline. It also runs directly from local files.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Can I use my own questions?</summary>
+        <p>Yes. The quiz workspace accepts custom JSON or JavaScript question banks. Only load JavaScript files from sources you trust.</p>
+      </details>
+    </section>
+
+    <section class="landing-block">
+      <div class="cta-banner">
+        <h2>Ready for your next round?</h2>
+        <p class="cta-motto">Practise. Review. Retry.</p>
+        <a class="btn btn-primary" href="#subjects">Choose a Subject</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="#top" class="logo footer-logo" data-config-logo>Revise<span>Loop</span></a>
+        <p class="footer-motto">Practise. Review. Retry. ↻</p>
+        <p class="footer-desc" data-config-text="brand.footerTagline">A focused workspace for MCQ practice, mock exams and revising your mistakes.</p>
+        <div class="footer-pills">
+          <span class="footer-pill">👤 No Account Needed</span>
+          <span class="footer-pill">💾 Progress Saved in Browser</span>
+          <span class="footer-pill">📶 Offline-Capable</span>
         </div>
-    </footer>
+      </div>
 
-    <script src="assets/js/config.js"></script>
-    <script src="assets/js/theme.js"></script>
-    <script src="assets/js/subjects-data.js"></script>
-    <script src="assets/js/home.js"></script>
-    <script src="assets/js/pwa.js"></script>
+      <div class="footer-links-group">
+        <nav class="footer-col" aria-label="Study links">
+          <h3>Study</h3>
+          <a href="#subjects">Browse Subjects</a>
+          <a href="quiz.html?subject=deep-learning" data-config-featured="0">Deep Learning Bank</a>
+          <a href="quiz.html?subject=pdc" data-config-featured="1">PDC Bank</a>
+          <button type="button" data-modal="shortcuts">Quiz Shortcuts</button>
+        </nav>
+        <nav class="footer-col" aria-label="Project links">
+          <h3>Project</h3>
+          <button type="button" data-modal="about">About</button>
+          <button type="button" data-modal="privacy">Privacy &amp; Data</button>
+          <a href="https://github.com/asad-ali-sajjad/reviseloop" data-config-href="links.repoUrl" target="_blank" rel="noopener noreferrer">Source Code</a>
+          <a href="https://github.com/asad-ali-sajjad/reviseloop/issues" data-config-href="links.issuesUrl" target="_blank" rel="noopener noreferrer">Report an Issue</a>
+          <a href="#top">Back to Top ↑</a>
+        </nav>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span><span data-config-text="brand.copyrightLine">Crafted for focused exam preparation</span> • <strong data-config-text="brand.name">ReviseLoop</strong></span>
+      <span>Built by <a href="https://github.com/asad-ali-sajjad" target="_blank" rel="noopener noreferrer">asad-ali-sajjad</a></span>
+    </div>
+  </footer>
+
+  <dialog class="landing-dialog" id="how" aria-labelledby="how-title">
+    <div class="dialog-body">
+      <h2 id="how-title">How the loop works</h2>
+      <ul>
+        <li><strong>Practise:</strong> answer questions in sequential quiz or timed mock exam mode.</li>
+        <li><strong>Review:</strong> study explanations and revisit your missed and saved questions.</li>
+        <li><strong>Retry:</strong> drill missed questions until you answer them correctly.</li>
+      </ul>
+      <form method="dialog"><button class="btn btn-primary" autofocus>Got it</button></form>
+    </div>
+  </dialog>
+
+  <dialog class="landing-dialog" id="about" aria-labelledby="about-title">
+    <div class="dialog-body">
+      <h2 id="about-title">About ReviseLoop</h2>
+      <p>ReviseLoop began as an interactive MCQ practice website and grew into a zero-backend exam revision workspace.</p>
+      <p>It is built with vanilla HTML, CSS, and JavaScript, with a focus on fast Computer Science exam preparation.</p>
+      <form method="dialog"><button class="btn btn-primary" autofocus>Close</button></form>
+    </div>
+  </dialog>
+
+  <dialog class="landing-dialog" id="privacy" aria-labelledby="privacy-title">
+    <div class="dialog-body">
+      <h2 id="privacy-title">Privacy &amp; data</h2>
+      <p>ReviseLoop requires no account and runs without a backend server. All quiz answers, bookmarks, and stats stay in your browser's local storage.</p>
+      <p>When online, this landing page loads the Fraunces display font from Google Fonts, which sends a standard font request to Google. Static hosting providers and external GitHub links follow their own privacy policies.</p>
+      <form method="dialog"><button class="btn btn-primary" autofocus>Close</button></form>
+    </div>
+  </dialog>
+
+  <dialog class="landing-dialog" id="shortcuts" aria-labelledby="shortcuts-title">
+    <div class="dialog-body">
+      <h2 id="shortcuts-title">Quiz shortcuts</h2>
+      <p>Available inside the quiz workspace:</p>
+      <ul>
+        <li><kbd>N</kbd> <kbd>J</kbd> <kbd>↓</kbd> Next question</li>
+        <li><kbd>K</kbd> <kbd>↑</kbd> Previous question</li>
+        <li><kbd>A</kbd>–<kbd>D</kbd> or <kbd>1</kbd>–<kbd>4</kbd> Select an option</li>
+        <li><kbd>S</kbd> Save or unsave question</li>
+        <li><kbd>E</kbd> Reveal answer in Sequential Quiz</li>
+        <li><kbd>T</kbd> Scroll back to top</li>
+        <li><kbd>/</kbd> Focus question search</li>
+        <li><kbd>[</kbd> Toggle desktop sidebar</li>
+        <li><kbd>?</kbd> Open shortcuts, <kbd>Esc</kbd> Close</li>
+      </ul>
+      <form method="dialog"><button class="btn btn-primary" autofocus>Close</button></form>
+    </div>
+  </dialog>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/theme.js"></script>
+  <script src="assets/js/subjects-data.js"></script>
+  <script src="assets/js/home.js"></script>
+  <script src="assets/js/landing.js"></script>
+  <script src="assets/js/pwa.js"></script>
 </body>
 </html>

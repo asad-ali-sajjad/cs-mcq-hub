@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CS MCQ Hub — Coming Soon & Legacy Link Resolver
+   ReviseLoop — Coming Soon & Legacy Link Resolver
    ========================================================================== */
 
 (function () {
@@ -35,7 +35,7 @@
   }
 
   const trackLabel = subject.track || subject.semester || "Curriculum";
-  document.title = `${subject.title} — ${brand.name || "CS MCQ Hub"}`;
+  document.title = `${subject.title} — ${brand.name || "ReviseLoop"}`;
 
   if (iconEl) iconEl.textContent = subject.icon || "📘";
   if (titleEl) titleEl.textContent = subject.title;
@@ -50,7 +50,7 @@
     }
     if (actionsEl) {
       actionsEl.innerHTML = `
-        <a href="quiz.html?subject=${encodeURIComponent(subject.id)}" class="btn btn-primary">Start Practice Now →</a>
+        <a href="quiz.html?subject=${encodeURIComponent(subject.id)}" class="btn btn-primary">Start Practising →</a>
         <a href="index.html" class="btn btn-secondary">← All Subjects</a>
       `;
     }

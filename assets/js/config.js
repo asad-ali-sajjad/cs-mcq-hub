@@ -1,21 +1,21 @@
 window.SITE_CONFIG = {
   brand: {
-    name: "CS MCQ Hub",
-    tagline: "Study Smarter. Revise Faster.",
-    logoPrefix: "CS",
-    logoSuffix: "-MCQ-HUB",
-    metaDescription: "Interactive, offline-friendly MCQ practice, randomized mock exams, and active-recall review for Computer Science courses.",
-    heroTag: "🚀 Interactive Exam Preparation Workspace",
-    heroHeadline: "Study Smarter.<br>Revise Faster.",
-    heroDescription: "Practice searchable Computer Science MCQs, timed mock exams, and active-recall reviews with local progress tracking.",
-    footerTagline: "Interactive MCQ practice, randomized mock exams, and active-recall review built for Computer Science courses.",
-    quizFooterTagline: "Focused MCQ practice, mock exams, and active-recall revision.",
+    name: "ReviseLoop",
+    tagline: "Practise. Review. Retry.",
+    logoPrefix: "Revise",
+    logoSuffix: "Loop",
+    metaDescription: "An offline-capable MCQ practice and exam revision workspace with mock exams, mistake review and progress tracking.",
+    heroTag: "🎓 Computer Science Exam Prep",
+    heroHeadline: "<span>Practise.</span> <span>Review.</span> <span>Retry.</span>",
+    heroDescription: "Turn every wrong answer into your next study step. Practise MCQs, take mock exams and revisit the questions you missed.",
+    footerTagline: "A focused workspace for MCQ practice, mock exams and revising your mistakes.",
+    quizFooterTagline: "Focused MCQ practice, mock exams and mistake review.",
     copyrightLine: "Crafted for focused exam preparation"
   },
   links: {
-    liveUrl: "https://asad-ali-sajjad.github.io/cs-mcq-hub/",
-    repoUrl: "https://github.com/asad-ali-sajjad/cs-mcq-hub",
-    issuesUrl: "https://github.com/asad-ali-sajjad/cs-mcq-hub/issues",
+    liveUrl: "https://asad-ali-sajjad.github.io/reviseloop/",
+    repoUrl: "https://github.com/asad-ali-sajjad/reviseloop",
+    issuesUrl: "https://github.com/asad-ali-sajjad/reviseloop/issues",
     featuredSubjects: [
       { label: "Deep Learning Bank", subjectId: "deep-learning" },
       { label: "PDC Bank", subjectId: "pdc" }
@@ -35,8 +35,8 @@ window.SITE_CONFIG = {
   },
   quizDefaults: {
     fallbackSubjectId: "pdc",
-    fallbackCourseCode: "CS-HUB",
-    fallbackTitle: "CS MCQ Practice",
+    fallbackCourseCode: "REVISELOOP",
+    fallbackTitle: "ReviseLoop MCQ Practice",
     fallbackSubtitle: "Interactive MCQ Practice & Exam Review",
     defaultPerPage: 50,
     perPageOptions: [50, 100, 9999],
@@ -46,9 +46,9 @@ window.SITE_CONFIG = {
     maxUploadSizeMB: 10
   },
   storage: {
-    prefix: "cs_mcq_hub_",
+    prefix: "reviseloop_",
     version: "v1",
-    themeKey: "cs_mcq_hub_theme"
+    themeKey: "reviseloop_theme"
   }
 };
 
@@ -81,20 +81,11 @@ window.SITE_CONFIG = {
     });
 
     document.querySelectorAll("[data-config-logo]").forEach((el) => {
-      el.textContent = "";
-      const name = (config.brand.name || "").trim();
-      if (name) {
-        const firstSpace = name.indexOf(" ");
-        el.appendChild(document.createTextNode(firstSpace === -1 ? name : name.slice(0, firstSpace)));
-        if (firstSpace !== -1) {
-          const suffix = document.createElement("span");
-          suffix.textContent = name.slice(firstSpace);
-          el.appendChild(suffix);
-        }
-      } else {
-        el.appendChild(document.createTextNode(config.brand.logoPrefix || ""));
+      const { name, logoPrefix, logoSuffix } = config.brand;
+      el.textContent = logoPrefix || name || "";
+      if (logoPrefix && logoSuffix) {
         const suffix = document.createElement("span");
-        suffix.textContent = config.brand.logoSuffix || "";
+        suffix.textContent = logoSuffix;
         el.appendChild(suffix);
       }
     });
@@ -115,5 +106,9 @@ window.SITE_CONFIG = {
     });
   }
 
-  hydratePage();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", hydratePage);
+  } else {
+    hydratePage();
+  }
 })();

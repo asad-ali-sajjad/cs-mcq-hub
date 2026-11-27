@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CS MCQ Hub — Universal Quiz & Review Engine
+   ReviseLoop — Universal Quiz & Review Engine
    Supports dynamic subject loading via ?subject=<id>, validated local upload,
    sample template downloads, progress export/import, and keyboard shortcuts.
    ========================================================================== */
@@ -10,8 +10,8 @@ const storageConfig = CFG.storage || {};
 const brandConfig = CFG.brand || {};
 const linksConfig = CFG.links || {};
 const fallbackSubjectId = quizDefaults.fallbackSubjectId || 'pdc';
-const fallbackCourseCode = quizDefaults.fallbackCourseCode || 'CS-HUB';
-const fallbackTitle = quizDefaults.fallbackTitle || 'CS MCQ Practice';
+const fallbackCourseCode = quizDefaults.fallbackCourseCode || 'BANK';
+const fallbackTitle = quizDefaults.fallbackTitle || 'Subject Practice';
 const fallbackSubtitle = quizDefaults.fallbackSubtitle || 'Interactive MCQ Practice & Exam Review';
 const defaultPerPage = quizDefaults.defaultPerPage || 50;
 const perPageOptions = Array.isArray(quizDefaults.perPageOptions) ? quizDefaults.perPageOptions : [50, 100, 9999];
@@ -435,7 +435,7 @@ function initializeDataset(dataset, options) {
 
 function applyHeaderAndTopicUI() {
   const total = MCQS_LIST.length;
-  document.title = `${EXAM_META.title} (${total} MCQs) — ${brandConfig.name || 'CS MCQ Hub'}`;
+  document.title = `${EXAM_META.title} (${total} MCQs) — ${brandConfig.name || 'ReviseLoop'}`;
   document.getElementById('sb-course-title').textContent = EXAM_META.title;
   document.getElementById('sb-total-sub').textContent = `${EXAM_META.courseCode} • ${total} MCQs`;
   document.getElementById('study-total-pill').textContent = total;
@@ -695,13 +695,13 @@ function demoShortcutAction(action) {
    4. Per-Subject LocalStorage Persistence, Migration & Export/Import
    -------------------------------------------------------------------------- */
 function getStorageKey() {
-  const prefix = storageConfig.prefix || 'cs_mcq_hub_';
+  const prefix = storageConfig.prefix || 'reviseloop_';
   const version = storageConfig.version || 'v1';
   return `${prefix}${ACTIVE_SUBJECT_ID}_${version}`;
 }
 
 function getLegacyStorageKey() {
-  const prefix = storageConfig.prefix || 'cs_mcq_hub_';
+  const prefix = storageConfig.prefix || 'reviseloop_';
   return `${prefix}${ACTIVE_SUBJECT_ID}`;
 }
 
@@ -773,7 +773,7 @@ function saveState() {
 
 function exportProgress() {
   const payload = {
-    app: brandConfig.name || 'CS MCQ Hub',
+    app: brandConfig.name || 'ReviseLoop',
     version: 1,
     subjectId: ACTIVE_SUBJECT_ID,
     subjectTitle: EXAM_META.title,
@@ -785,7 +785,7 @@ function exportProgress() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `cs-mcq-hub-${ACTIVE_SUBJECT_ID}-${dateStamp}.json`;
+  a.download = `reviseloop-${ACTIVE_SUBJECT_ID}-${dateStamp}.json`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -907,7 +907,7 @@ function escapeHtml(str) {
 }
 
 function buildReportIssueUrl(item) {
-  const baseUrl = (linksConfig.issuesUrl || 'https://github.com/asad-ali-sajjad/cs-mcq-hub/issues').replace(/\/+$/, '');
+  const baseUrl = (linksConfig.issuesUrl || 'https://github.com/asad-ali-sajjad/reviseloop/issues').replace(/\/+$/, '');
   const title = `[Question Issue] ${EXAM_META.title} — Q#${item.num}`;
   const body = [
     `**Subject:** ${EXAM_META.title} (\`${ACTIVE_SUBJECT_ID}\`)`,

@@ -1,12 +1,13 @@
 /* ==========================================================================
-   CS MCQ Hub — Home Catalog & Filtering Controller
+   ReviseLoop — Home Catalog & Filtering Controller
    ========================================================================== */
 
 (function () {
   const CFG = window.SITE_CONFIG || {};
   const catalogConfig = CFG.catalog || {};
   const storageConfig = CFG.storage || {};
-  const storagePrefix = storageConfig.prefix || "cs_mcq_hub_";
+  // Legacy prefix preserved intentionally so existing saved progress still loads.
+  const storagePrefix = storageConfig.prefix || "reviseloop_";
   const storageVersion = storageConfig.version || "v1";
 
   const tracks = Array.isArray(catalogConfig.tracks) && catalogConfig.tracks.length > 0
@@ -172,7 +173,7 @@
     } else if (latestProgress.total != null) {
       subline = `Last opened • ${latestProgress.total} questions available`;
     } else {
-      subline = "Last opened • Ready to practice";
+      subline = "Last opened • Ready to practise";
     }
 
     continueSection.hidden = false;
@@ -203,7 +204,7 @@
       if (total != null) {
         return escapeHtml(`${progress.attempted} / ${total} Qs`);
       }
-      return escapeHtml(`${progress.attempted} Practiced`);
+      return escapeHtml(`${progress.attempted} Practised`);
     }
 
     if (total != null) {
@@ -295,7 +296,7 @@
       }
 
       const targetUrl = `quiz.html?subject=${encodeURIComponent(sub.id)}`;
-      const ctaLabel = progress && progress.attempted > 0 ? "Continue Practice →" : "Start Practice →";
+      const ctaLabel = progress && progress.attempted > 0 ? "Continue Practising →" : "Start Practising →";
       return `
         <article class="subject-card">
           <div class="card-top">

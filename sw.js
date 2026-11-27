@@ -1,8 +1,9 @@
 /* ==========================================================================
-   CS MCQ Hub — Offline Service Worker (Stale-While-Revalidate)
+   ReviseLoop — Offline Service Worker (Stale-While-Revalidate)
    ========================================================================== */
 
-const CACHE_NAME = "cs-mcq-hub-shell-v1";
+const CACHE_NAME = "reviseloop-shell-v1";
+const PROJECT_CACHE_PREFIXES = ["reviseloop-", "cs-mcq-hub-"];
 
 const CORE_ASSETS = [
   "./",
@@ -18,6 +19,7 @@ const CORE_ASSETS = [
   "./assets/js/theme.js",
   "./assets/js/subjects-data.js",
   "./assets/js/home.js",
+  "./assets/js/landing.js",
   "./assets/js/quiz-engine.js",
   "./assets/js/coming-soon.js",
   "./assets/js/pwa.js"
@@ -37,7 +39,11 @@ self.addEventListener("activate", (event) => {
     caches.keys().then((keys) =>
       Promise.all(
         keys
-          .filter((key) => key !== CACHE_NAME)
+          .filter(
+            (key) =>
+              key !== CACHE_NAME &&
+              PROJECT_CACHE_PREFIXES.some((prefix) => key.startsWith(prefix))
+          )
           .map((key) => caches.delete(key))
       )
     )

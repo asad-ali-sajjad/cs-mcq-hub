@@ -1,18 +1,18 @@
 <div align="center">
 
-# 🚀 CS-MCQ-HUB
+# 🔄 ReviseLoop
 
-**Study Smarter. Revise Faster.**  
-*An interactive, offline-capable MCQ workspace for Computer Science exam preparation.*
+**Close the gap between studying and knowing.**  
+*An interactive, offline-capable MCQ practice and exam revision workspace.*
 
 A fast, zero-backend interactive MCQ practice, mock exam, and mistake-review platform built with vanilla HTML, CSS, and JavaScript. Designed to run seamlessly both locally (`file://`) and on static hosts like GitHub Pages with full offline PWA support.
 
-[![Live Demo](https://img.shields.io/badge/Live_Site-GitHub_Pages-3b5bdb?style=for-the-badge&logo=github)](https://asad-ali-sajjad.github.io/cs-mcq-hub/)
-[![Validate Banks](https://img.shields.io/github/actions/workflow/status/asad-ali-sajjad/cs-mcq-hub/validate-banks.yml?style=for-the-badge&label=Bank_Validation)](https://github.com/asad-ali-sajjad/cs-mcq-hub/actions/workflows/validate-banks.yml)
-[![Repo Size](https://img.shields.io/github/repo-size/asad-ali-sajjad/cs-mcq-hub?style=for-the-badge&color=0f172a)](https://github.com/asad-ali-sajjad/cs-mcq-hub)
-[![Last Commit](https://img.shields.io/github/last-commit/asad-ali-sajjad/cs-mcq-hub?style=for-the-badge&color=10b981)](https://github.com/asad-ali-sajjad/cs-mcq-hub/commits/main)
+[![Live Demo](https://img.shields.io/badge/Live_Site-GitHub_Pages-3b5bdb?style=for-the-badge&logo=github)](https://asad-ali-sajjad.github.io/reviseloop/)
+[![Validate Banks](https://img.shields.io/github/actions/workflow/status/asad-ali-sajjad/reviseloop/validate-banks.yml?style=for-the-badge&label=Bank_Validation)](https://github.com/asad-ali-sajjad/reviseloop/actions/workflows/validate-banks.yml)
+[![Repo Size](https://img.shields.io/github/repo-size/asad-ali-sajjad/reviseloop?style=for-the-badge&color=0f172a)](https://github.com/asad-ali-sajjad/reviseloop)
+[![Last Commit](https://img.shields.io/github/last-commit/asad-ali-sajjad/reviseloop?style=for-the-badge&color=10b981)](https://github.com/asad-ali-sajjad/reviseloop/commits/main)
 
-[🌐 Launch Live Workspace](https://asad-ali-sajjad.github.io/cs-mcq-hub/) • [📁 Project Structure](#-project-structure) • [✨ Features](#-features-built) • [⌨️ Shortcuts](#️-keyboard-shortcuts) • [🐛 Report an Issue](https://github.com/asad-ali-sajjad/cs-mcq-hub/issues)
+[🌐 Launch Live Workspace](https://asad-ali-sajjad.github.io/reviseloop/) • [📁 Project Structure](#-project-structure) • [✨ Features](#-features-built) • [⌨️ Shortcuts](#️-keyboard-shortcuts) • [🐛 Report an Issue](https://github.com/asad-ali-sajjad/reviseloop/issues)
 
 </div>
 
@@ -21,11 +21,11 @@ A fast, zero-backend interactive MCQ practice, mock exam, and mistake-review pla
 ## 📁 Project Structure
 
 ```text
-cs-mcq-hub/
-├── index.html                      # Subject catalog, live resume banner & track filter hub
+reviseloop/
+├── index.html                      # Landing page, live demo question, catalog & resume hub
 ├── quiz.html                       # Universal interactive quiz, mock exam & review workspace
 ├── coming-soon.html                # Dynamic status resolver for upcoming or legacy subject links
-├── manifest.webmanifest            # PWA Web App Manifest (standalone mode & inline SVG icons)
+├── manifest.webmanifest            # PWA Web App Manifest (standalone mode & inline loop SVG icons)
 ├── sw.js                           # Service Worker (offline navigation & Stale-While-Revalidate cache)
 ├── project-context.json            # Versioned architectural & schema documentation for AI tooling
 ├── README.md                       # Repository documentation
@@ -37,13 +37,14 @@ cs-mcq-hub/
 ├── assets/
 │   ├── css/
 │   │   ├── global.css              # Design tokens, typography, Light/Dark themes & ambient blobs
-│   │   ├── home.css                # Catalog grid, Continue banner, progress bars & filter tabs
+│   │   ├── home.css                # Hero demo, catalog grid, Continue banner, modals & filter tabs
 │   │   ├── quiz.css                # Sidebar, MCQ cards/buttons, modals, telemetry & floating dock
 │   │   └── coming-soon.css         # Status card styles for upcoming subjects
 │   └── js/
 │       ├── config.js               # Central site branding, links, catalog tracks & quiz defaults
 │       ├── subjects-data.js        # Central subject registry (IDs, metadata, counts, readiness & paths)
 │       ├── home.js                 # Catalog rendering, live resume tracking, search & track filters
+│       ├── landing.js              # Interactive hero demo question & native <dialog> modals
 │       ├── quiz-engine.js          # Universal quiz engine, mock generator, upload & export/import
 │       ├── coming-soon.js          # Subject status & readiness resolver for coming-soon.html
 │       ├── theme.js                # Persistent Light / Dark theme switcher
@@ -58,26 +59,27 @@ cs-mcq-hub/
     └── sem-8/                      # 8th Semester subject banks
 ```
 
-`config.js` loads before page scripts and exposes settings via `window.SITE_CONFIG`. All scripts are classic non-module scripts so the entire hub runs cleanly both by double-clicking `index.html` (`file://`) and on GitHub Pages (`https://`).
+`config.js` loads before page scripts and exposes settings via `window.SITE_CONFIG`. All scripts are classic non-module scripts so the entire workspace runs cleanly both by double-clicking `index.html` (`file://`) and on GitHub Pages (`https://`).
 
 ---
 
 ## ✨ Features Built
 
 ### 1. Dynamic Multi-Subject Architecture & Live Resume Tracking
+- **Interactive Landing Experience (`index.html`):** Features a live interactive sample question in the hero section, feature highlights, FAQ accordion, native `<dialog>` modals (About, Offline & Storage, Keyboard Shortcuts), and a filterable subject catalog.
 - **URL-Driven Subject Loading:** Opening `quiz.html?subject=<id>` resolves the subject from `subjects-data.js` (or standard `data/` folders) and dynamically injects its `.js` bank via `<script>` tags—avoiding `file://` CORS restrictions.
-- **Continue Where You Left Off & Live Telemetry:** The home hub (`index.html`) tracks your last opened or practiced subject, displays a **Continue where you left off** resume banner, aggregates total attempted questions and exact accuracy, and renders per-card progress bars (staying synced across browser Back-button navigation via `pageshow`).
-- **Isolated Per-Subject Storage:** Progress, missed answers, bookmarks, and exact stats snapshots are scoped per subject in `localStorage` (`cs_mcq_hub_<id>_v1`) with automatic migration from legacy keys.
+- **Continue Where You Left Off & Live Telemetry:** The catalog hub tracks your last opened or practised subject, displays a **Continue where you left off** resume banner, aggregates total attempted questions and exact accuracy, and renders per-card progress bars (staying synced across browser Back-button navigation via `pageshow`).
+- **Isolated Per-Subject Storage:** Progress, missed answers, bookmarks, and exact stats snapshots are scoped per subject in `localStorage` (`reviseloop_<id>_v1`) with automatic migration from legacy keys.
 
 ### 2. Five Study & Exam Modes
 - **📖 Study Bank:** Browse all questions with answers and detailed explanations (`exp` / `explanation`) unlocked immediately.
-- **✍️ Sequential Quiz:** Practice question-by-question with instant grading, single-card `Show Answer` reveals, deterministic option shuffling (`🔀 Shuffle`), and an inline `↺ Reset Quiz` button backed by a 6-second `↺ Undo` recovery toast.
+- **✍️ Sequential Quiz:** Practise question-by-question with instant grading, single-card `Show Answer` reveals, deterministic option shuffling (`🔀 Shuffle`), and an inline `↺ Reset Quiz` button backed by a 6-second `↺ Undo` recovery toast.
 - **🎲 Mock Exam:** Generate randomized exams (10, 25, 50, or 100 questions) filtered by difficulty, supporting both **Instant Feedback** and **Exam Mode** (graded upon submission).
-- **❌ Missed / Wrong Review:** Automatically collects wrong answers from Sequential Quiz and Mock Exams; includes `🔄 Retry Missed` (auto-removes questions once answered correctly), per-card `✓ Done`, and `🧹 Clear All` with Undo.
+- **❌ Missed / Wrong Review:** Automatically collects wrong answers from Sequential Quiz and Mock Exams; includes `🔄 Retry Missed` (auto-removes questions once answered correctly), per-card `✅ Done`, and `🧹 Clear All` with Undo.
 - **⭐ Saved Review:** Bookmark tricky questions (`☆ Save`) for focused revision or self-quizzing via `✍️ Practice Saved`.
 
 ### 3. Data Portability, Issue Reporting & Custom Bank Upload
-- **Progress Export & Import (`.json`):** Back up your subject progress with `⬇ Export` or restore/transfer progress across devices with `⬆ Import` (includes 6-second Undo rollback).
+- **Progress Export & Import (`.json`):** Back up your subject progress (`reviseloop-<id>-<date>.json`) with `⬇ Export` or restore/transfer progress across devices with `⬆ Import` (includes 6-second Undo rollback).
 - **One-Click Question Issue Reporting:** Every question card includes a `⚑ Report` button that opens a prefilled GitHub issue containing the subject, question number, stem, options, and current answer key.
 - **In-Browser Bank Upload & Validator:** Drag-and-drop or upload custom `.json` or `.js` question banks (up to 10 MB) in the browser with schema validation, syntax checking, and downloadable starter templates.
 
@@ -86,8 +88,8 @@ cs-mcq-hub/
 - **Structured Explanations:** Normalizes `exp`, `explanation`, and `feedback` fields into clean `💡 Explanation` callouts inside every answer banner.
 
 ### 5. Offline PWA, Accessibility & Mobile Navigation
-- **Offline-Ready PWA:** When served over HTTPS or `localhost`, `pwa.js` registers `sw.js` to pre-cache the app shell, handle `quiz.html?subject=<id>` offline via `ignoreSearch`, and cache visited question banks using Stale-While-Revalidate (automatically skipped on `file://`).
-- **Accessible & Touch-Friendly UI:** Semantic `<button>` MCQ options with `✓`/`✗` indicators, `inert` focus management on modals and the collapsible sidebar, `44px` minimum touch targets, and a persistent Light / Dark theme (`theme.js`).
+- **Offline-Ready PWA:** When served over HTTPS or `localhost`, `pwa.js` registers `sw.js` (`reviseloop-shell-v1`) to pre-cache the app shell, handle `quiz.html?subject=<id>` offline via `ignoreSearch`, and cache visited question banks using Stale-While-Revalidate (automatically skipped on `file://`).
+- **Accessible & Touch-Friendly UI:** Semantic `<button>` MCQ options with `✅`/`❌` indicators, `inert` focus management on modals and the collapsible sidebar, `44px` minimum touch targets, and a persistent Light / Dark theme (`theme.js`).
 - **Floating Quick-Nav Dock:** Thumb-accessible `Next ↓` and `↑ Top` pill buttons anchored in the bottom-right corner that automatically advance across paginated batches.
 
 ---

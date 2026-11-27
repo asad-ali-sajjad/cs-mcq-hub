@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CS MCQ Hub — Central Subject Registry
+   ReviseLoop — Central Subject Registry
    Subject metadata and readiness sourced from the site configuration
    ========================================================================== */
 
