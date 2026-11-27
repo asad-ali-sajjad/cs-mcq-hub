@@ -563,3 +563,41 @@ kbd {
     gap: 28px;
   }
 }
+
+
+/* ===== MOBILE FIXES: global ===== */
+html, body { overflow-x: clip; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+a, button, summary, select, input {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Stop background scrolling behind dialogs */
+html:has(dialog[open]) { overflow: hidden; }
+
+.logo, .theme-btn { white-space: nowrap; flex-shrink: 0; }
+
+@media (max-width: 920px) {
+  .blob { display: none; }
+  .navbar,
+  [data-theme="dark"] .navbar {
+    background: var(--bg);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .site-footer { backdrop-filter: none; }
+}
+
+/* Section links remain available in the footer */
+@media (max-width: 560px) {
+  .nav-links a[href="#subjects"],
+  .nav-links a[href="#features"] { display: none; }
+  .theme-btn { margin-left: 0; }
+}
+
+@media (hover: none) {
+  .btn:hover, .theme-btn:hover, .footer-col a:hover,
+  .footer-col button:hover { transform: none; }
+}
